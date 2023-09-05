@@ -1,0 +1,16 @@
+{
+	"name": "DS_ADL_xml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "my-syn-test-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			}
+		}
+	}
+}
