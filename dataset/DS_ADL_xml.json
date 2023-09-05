@@ -11,6 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "ApplicationGroup2_KEDE.xml",
+				"folderPath": "ApplicationGroupKede",
 				"fileSystem": "staging"
 			}
 		}
