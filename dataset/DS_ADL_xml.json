@@ -1,0 +1,18 @@
+{
+	"name": "DS_ADL_xml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysynstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ApplicationGroup2_KEDE.xml",
+				"fileSystem": "staging"
+			}
+		}
+	}
+}
