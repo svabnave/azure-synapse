@@ -36,7 +36,10 @@
 				"inputs": [
 					{
 						"referenceName": "DS_ADL_Binary",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": "Incoterm_MDX.xml"
+						}
 					}
 				],
 				"outputs": [
