@@ -1,0 +1,20 @@
+{
+	"name": "DS_ADL_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysynstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Processed",
+				"fileSystem": "staging"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
