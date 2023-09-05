@@ -1,0 +1,17 @@
+{
+	"name": "DS_ADL_destination",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysynstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "staging"
+			}
+		}
+	}
+}
