@@ -1,5 +1,5 @@
 {
-	"name": "Dataflow1",
+	"name": "DF_Incoterm",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
