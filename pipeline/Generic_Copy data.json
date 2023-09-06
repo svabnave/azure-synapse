@@ -107,7 +107,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DF_Incoterm",
+						"referenceName": "Generic_DF_Flatten",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
