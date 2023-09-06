@@ -1,5 +1,5 @@
 {
-	"name": "DF_Incoterm",
+	"name": "Generic_DF_Flatten",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
