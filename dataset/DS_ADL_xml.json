@@ -5,12 +5,27 @@
 			"referenceName": "LS_ADL_mysynstorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"DirectoryName": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Xml",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "ApplicationGroup2_KEDE.xml",
+				"fileName": {
+					"value": "@dataset().Filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().DirectoryName",
+					"type": "Expression"
+				},
 				"fileSystem": "staging"
 			}
 		}
