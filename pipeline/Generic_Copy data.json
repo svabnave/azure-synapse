@@ -122,7 +122,7 @@
 							},
 							"sink1": {
 								"Directoryname": {
-									"value": "@pipeline().parameters.Directoryname",
+									"value": "@concat(pipeline().parameters.Directoryname,'/Processed')",
 									"type": "Expression"
 								}
 							}
