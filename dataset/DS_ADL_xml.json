@@ -7,12 +7,10 @@
 		},
 		"parameters": {
 			"DirectoryName": {
-				"type": "string",
-				"defaultValue": "Incoterm_MDX"
+				"type": "string"
 			},
 			"Filename": {
-				"type": "string",
-				"defaultValue": "Incoterm_MDX/Incoterm_MDX.xml_2023-09-06T08:32:51.1825822Z"
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -20,7 +18,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Incoterm_MDX",
+				"fileName": {
+					"value": "@dataset().Filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().DirectoryName",
+					"type": "Expression"
+				},
 				"fileSystem": "staging"
 			}
 		}
