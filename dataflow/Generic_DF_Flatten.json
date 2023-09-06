@@ -5,10 +5,6 @@
 		"typeProperties": {
 			"sources": [
 				{
-					"dataset": {
-						"referenceName": "DS_ADL_xml",
-						"type": "DatasetReference"
-					},
 					"name": "source1"
 				}
 			],
@@ -27,18 +23,13 @@
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          {http://www.w3.org/2005/Atom,feed} as ({http://www.w3.org/2005/Atom,author} as ({http://www.w3.org/2005/Atom,name} as string), {http://www.w3.org/2005/Atom,entry} as ({http://www.w3.org/2005/Atom,category} as ({@scheme} as string, {@term} as string), {http://www.w3.org/2005/Atom,content} as ({@type} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties} as ({http://schemas.microsoft.com/ado/2007/08/dataservices,Bzirk} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices,Bztxt} as string)), {http://www.w3.org/2005/Atom,id} as string, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string, {@title} as string), {http://www.w3.org/2005/Atom,title} as ({@type} as string, {http://www.w3.org/2005/Atom,_value_} as string), {http://www.w3.org/2005/Atom,updated} as timestamp)[], {http://www.w3.org/2005/Atom,id} as string, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string, {@title} as string), {http://www.w3.org/2005/Atom,title} as ({@type} as string, {http://www.w3.org/2005/Atom,_value_} as string), {http://www.w3.org/2005/Atom,updated} as timestamp)",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     inferDriftedColumnTypes: true,",
-				"     ignoreNoFilesFound: false,",
-				"     validationMode: 'none',",
-				"     namespaces: true) ~> source1",
+				"     inferDriftedColumnTypes: true) ~> source1",
 				"source1 foldDown(unroll({http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}),",
 				"     mapColumn(",
-				"          each(match(ERROR_FUNCTION('')))",
+				"          Bzirk = {http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties}.{http://schemas.microsoft.com/ado/2007/08/dataservices,Bzirk},",
+				"          Bztxt = {http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties}.{http://schemas.microsoft.com/ado/2007/08/dataservices,Bztxt}",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
