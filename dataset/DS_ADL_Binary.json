@@ -7,8 +7,7 @@
 		},
 		"parameters": {
 			"Filename": {
-				"type": "string",
-				"defaultValue": "Incoterm_MDX.xml"
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -16,10 +15,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().Filename",
-					"type": "Expression"
-				},
 				"folderPath": "Source_Files",
 				"fileSystem": "http"
 			}
