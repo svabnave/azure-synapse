@@ -45,7 +45,10 @@
 						"referenceName": "DS_ADL_Binary",
 						"type": "DatasetReference",
 						"parameters": {
-							"Filename": "Incoterm_MDX.xml"
+							"Filename": {
+								"value": "@pipeline().parameters.Filename",
+								"type": "Expression"
+							}
 						}
 					}
 				],
