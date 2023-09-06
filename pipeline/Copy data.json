@@ -85,6 +85,43 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Incoterm",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"DirectoryName": "Incoterm_MDX",
+								"Filename": "Incoterm_MDX/Incoterm_MDX.xml_2023-09-06T08:32:51.1825822Z"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"parameters": {
