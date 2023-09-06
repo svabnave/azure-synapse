@@ -7,7 +7,8 @@
 		},
 		"parameters": {
 			"DirectoryName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Incoterm_MDX"
 			},
 			"Filename": {
 				"type": "string",
@@ -19,14 +20,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().Filename",
-					"type": "Expression"
-				},
-				"folderPath": {
-					"value": "@dataset().DirectoryName",
-					"type": "Expression"
-				},
 				"fileSystem": "staging"
 			}
 		}
