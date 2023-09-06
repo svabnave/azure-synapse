@@ -108,33 +108,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Generic_DF_Flatten",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"source1": {
-								"DirectoryName": {
-									"value": "@pipeline().parameters.Directoryname",
-									"type": "Expression"
-								},
-								"Filename": {
-									"value": "@variables('CurrentTime')",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceParameters": {
-							"source1": {
-								"schemaLinkedService": {
-									"DirectoryName": {
-										"value": "@pipeline().parameters.Directoryname",
-										"type": "Expression"
-									},
-									"Filename": {
-										"value": "@pipeline().parameters.Filename",
-										"type": "Expression"
-									}
-								}
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
