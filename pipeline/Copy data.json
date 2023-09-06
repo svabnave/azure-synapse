@@ -81,7 +81,7 @@
 				"typeProperties": {
 					"variableName": "CurrentTime",
 					"value": {
-						"value": "@concat(pipeline().parameters.Filename,'_',utcNow())",
+						"value": "@concat( pipeline().parameters.Filename,'_',convertFromUtc(utcnow(),'W.Europe Standard Time','.xml'))",
 						"type": "Expression"
 					}
 				}
@@ -111,8 +111,14 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
-								"DirectoryName": "Incoterm_MDX",
-								"Filename": "Incoterm_MDX/Incoterm_MDX.xml_2023-09-06T08:32:51.1825822Z"
+								"DirectoryName": {
+									"value": "@pipeline().parameters.Directoryname",
+									"type": "Expression"
+								},
+								"Filename": {
+									"value": "@pipeline().parameters.Filename",
+									"type": "Expression"
+								}
 							}
 						}
 					},
