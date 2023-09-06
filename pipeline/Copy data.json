@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -61,6 +68,23 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CurrentTime",
+					"value": {
+						"value": "@concat(utcNow(pipeline().parameters.Filename),'_','w.eastern standard time')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -69,6 +93,11 @@
 			},
 			"Filename": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"CurrentTime": {
+				"type": "String"
 			}
 		},
 		"annotations": []
