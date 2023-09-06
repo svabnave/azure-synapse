@@ -5,6 +5,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "DS_ADL_xml",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
 				}
 			],
@@ -25,7 +29,10 @@
 			"scriptLines": [
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     inferDriftedColumnTypes: true) ~> source1",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     validationMode: 'none',",
+				"     namespaces: true) ~> source1",
 				"source1 foldDown(unroll({http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}),",
 				"     mapColumn(",
 				"          Bzirk = {http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties}.{http://schemas.microsoft.com/ado/2007/08/dataservices,Bzirk},",
