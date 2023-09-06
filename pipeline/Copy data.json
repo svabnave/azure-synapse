@@ -81,7 +81,7 @@
 				"typeProperties": {
 					"variableName": "CurrentTime",
 					"value": {
-						"value": "utcNow()",
+						"value": "@concat(pipeline().parameters.Filename,'_',utcNow())",
 						"type": "Expression"
 					}
 				}
