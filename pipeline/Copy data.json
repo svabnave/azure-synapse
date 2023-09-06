@@ -108,7 +108,19 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Incoterm",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"DirectoryName": {
+									"value": "@pipeline().parameters.Directoryname",
+									"type": "Expression"
+								},
+								"Filename": {
+									"value": "@variables('CurrentTime')",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
