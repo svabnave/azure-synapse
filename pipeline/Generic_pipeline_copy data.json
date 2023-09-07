@@ -45,7 +45,11 @@
 				"outputs": [
 					{
 						"referenceName": "Generic_DS_ADL_destination",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Directoryname": "Incoterm_MDX",
+							"Filename": "Incoterm_MDX.xml"
+						}
 					}
 				]
 			}
