@@ -5,6 +5,14 @@
 			"referenceName": "LS_ADL_mysyntest",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Directoryname": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Xml",
 		"typeProperties": {
