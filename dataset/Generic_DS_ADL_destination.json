@@ -1,0 +1,17 @@
+{
+	"name": "Generic_DS_ADL_destination",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysyntest",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "staging"
+			}
+		}
+	}
+}

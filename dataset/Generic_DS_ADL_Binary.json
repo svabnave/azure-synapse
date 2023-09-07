@@ -1,0 +1,18 @@
+{
+	"name": "Generic_DS_ADL_Binary",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_OData",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Source_Files",
+				"fileSystem": "http"
+			}
+		}
+	}
+}
