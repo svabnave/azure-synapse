@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Copy data from http to staging",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -25,11 +25,26 @@
 							"type": "BinaryReadSettings"
 						}
 					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
 						"referenceName": "Generic_DS_ADL_Binary",
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": "Incoterm_MDX.xml"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Generic_DS_ADL_destination",
 						"type": "DatasetReference"
 					}
 				]
