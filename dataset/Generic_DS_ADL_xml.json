@@ -18,6 +18,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "Incoterm_MDX_2023-09-07T15:02:04.1352712.xml",
+				"folderPath": "Incoterm_MDX",
 				"fileSystem": "staging"
 			}
 		}
