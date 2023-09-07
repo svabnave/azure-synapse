@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data from http to staging",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -52,11 +59,27 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
 			}
 		],
 		"parameters": {
 			"tablename": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Incoterm_MDX"
+			}
+		},
+		"variables": {
+			"CurrentTime": {
+				"type": "String"
 			}
 		},
 		"annotations": []
