@@ -81,9 +81,52 @@
 				"typeProperties": {
 					"variableName": "FileName",
 					"value": {
-						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'))",
+						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time','.xml'))",
 						"type": "Expression"
 					}
+				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy data from http to staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Generic _Flatten _Dataflow",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"Directoryname": {
+									"value": "@pipeline().parameters.tablename",
+									"type": "Expression"
+								},
+								"Filename": {
+									"value": "@variables('FileName')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
