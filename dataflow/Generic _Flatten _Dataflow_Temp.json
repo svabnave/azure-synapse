@@ -1,5 +1,5 @@
 {
-	"name": "Generic _Flatten _Dataflow",
+	"name": "Generic _Flatten _Dataflow_Temp",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
