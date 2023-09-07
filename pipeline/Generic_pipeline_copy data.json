@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Set FileName",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -64,7 +64,7 @@
 				]
 			},
 			{
-				"name": "Set variable1",
+				"name": "Set FileName",
 				"type": "SetVariable",
 				"dependsOn": [],
 				"policy": {
@@ -73,7 +73,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "CurrentTime",
+					"variableName": "FileName",
 					"value": {
 						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'))",
 						"type": "Expression"
@@ -88,7 +88,7 @@
 			}
 		},
 		"variables": {
-			"CurrentTime": {
+			"FileName": {
 				"type": "String"
 			}
 		},
