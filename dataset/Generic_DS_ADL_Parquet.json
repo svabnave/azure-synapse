@@ -5,11 +5,20 @@
 			"referenceName": "LS_ADL_mysyntest",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Directoryname": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().Directoryname,'/Processed')",
+					"type": "Expression"
+				},
 				"fileSystem": "staging"
 			},
 			"compressionCodec": "snappy"
