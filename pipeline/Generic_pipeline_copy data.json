@@ -111,14 +111,20 @@
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
-								"Directoryname": "Incoterm_MDX",
+								"Directoryname": {
+									"value": "@pipeline().parameters.tablename",
+									"type": "Expression"
+								},
 								"Filename": {
 									"value": "@variables('FileName')",
 									"type": "Expression"
 								}
 							},
 							"sink1": {
-								"Directoryname": "Incoterm_MDX/Processed"
+								"Directoryname": {
+									"value": "@concat(pipeline().parameters.tablename,'/Processed')",
+									"type": "Expression"
+								}
 							}
 						}
 					},
