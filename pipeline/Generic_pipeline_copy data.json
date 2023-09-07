@@ -55,7 +55,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Directoryname": "Incoterm_MDX",
-							"Filename": "Incoterm_MDX.xml"
+							"Filename": {
+								"value": "@variables('CurrentTime')",
+								"type": "Expression"
+							}
 						}
 					}
 				]
@@ -68,7 +71,14 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CurrentTime",
+					"value": {
+						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W.Europe standard Time'))",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
