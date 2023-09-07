@@ -119,6 +119,12 @@
 									"value": "@variables('FileName')",
 									"type": "Expression"
 								}
+							},
+							"sink1": {
+								"Directoryname": {
+									"value": "@pipeline().parameters.tablename",
+									"type": "Expression"
+								}
 							}
 						}
 					},
