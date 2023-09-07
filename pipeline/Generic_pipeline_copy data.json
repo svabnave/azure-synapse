@@ -45,7 +45,10 @@
 						"referenceName": "Generic_DS_ADL_Binary",
 						"type": "DatasetReference",
 						"parameters": {
-							"Filename": "Incoterm_MDX.xml"
+							"Filename": {
+								"value": "@pipeline().parameters.tablename",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -54,7 +57,10 @@
 						"referenceName": "Generic_DS_ADL_destination",
 						"type": "DatasetReference",
 						"parameters": {
-							"Directoryname": "Incoterm_MDX",
+							"Directoryname": {
+								"value": "@pipeline().parameters.tablename",
+								"type": "Expression"
+							},
 							"Filename": {
 								"value": "@variables('FileName')",
 								"type": "Expression"
