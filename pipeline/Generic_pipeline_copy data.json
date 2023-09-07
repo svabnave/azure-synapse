@@ -46,7 +46,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Filename": {
-								"value": "@variables('FileName')",
+								"value": "@concat(pipeline().parameters.tablename,'.xml')",
 								"type": "Expression"
 							}
 						}
