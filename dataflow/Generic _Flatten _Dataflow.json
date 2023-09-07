@@ -39,7 +39,7 @@
 				"source1 foldDown(unroll({http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}),",
 				"     mapColumn(",
 				"          each({http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties},match(true()),",
-				"               replace($$, 'http://schemas.microsoft.com/ado/2007/08/dataservices,', '') = $$)",
+				"               replace($$,'http://schemas.microsoft.com/ado/2007/08/dataservices,','') = $$)",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
