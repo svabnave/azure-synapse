@@ -56,7 +56,7 @@
 						"parameters": {
 							"Directoryname": "Incoterm_MDX",
 							"Filename": {
-								"value": "@variables('CurrentTime')",
+								"value": "@variables('FileName')",
 								"type": "Expression"
 							}
 						}
