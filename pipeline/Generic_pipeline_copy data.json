@@ -110,16 +110,6 @@
 						"referenceName": "Generic _Flatten _Dataflow",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"source1": {
-								"Directoryname": {
-									"value": "@pipeline().parameters.tablename",
-									"type": "Expression"
-								},
-								"Filename": {
-									"value": "@variables('FileName')",
-									"type": "Expression"
-								}
-							},
 							"sink1": {
 								"Directoryname": {
 									"value": "@concat(pipeline().parameters.tablename,'/Processed')",
