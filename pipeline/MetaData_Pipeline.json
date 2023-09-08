@@ -108,7 +108,25 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Metadata",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"Directoryname": {
+									"value": "@pipeline().parameters.tablename",
+									"type": "Expression"
+								},
+								"Filename": {
+									"value": "@variables('Filename')",
+									"type": "Expression"
+								}
+							},
+							"sink1": {
+								"Directoryname": {
+									"value": "@concat(pipeline().parameters.tablename,'/Processed')",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
