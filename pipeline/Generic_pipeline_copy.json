@@ -1,5 +1,5 @@
 {
-	"name": "Metadata_pipeline",
+	"name": "Generic_pipeline_copy",
 	"properties": {
 		"activities": [
 			{
@@ -139,7 +139,7 @@
 		"parameters": {
 			"tablename": {
 				"type": "string",
-				"defaultValue": "MetaData"
+				"defaultValue": "Incoterm_MDX"
 			}
 		},
 		"variables": {
