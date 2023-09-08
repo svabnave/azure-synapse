@@ -31,7 +31,8 @@
 				"source1 foldDown(unroll({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property}),",
 				"     mapColumn(",
 				"          each({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property},match(true()),",
-				"               ERROR_FUNCTION('') = $$)",
+				"               replace(replace($$, 'http://www.sap.com/Protocols/SAPData,@', ''),'@','') = $$),",
+				"          {@Name} = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef}.{@Name}",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1"
