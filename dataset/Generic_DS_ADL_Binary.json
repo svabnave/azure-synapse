@@ -7,8 +7,7 @@
 		},
 		"parameters": {
 			"Filename": {
-				"type": "string",
-				"defaultValue": "Incoterm_MDX.xml"
+				"type": "string"
 			}
 		},
 		"annotations": [],
