@@ -3,7 +3,24 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Set Filename",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Filename",
+					"value": {
+						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy data from http to staging",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -62,29 +79,12 @@
 								"type": "Expression"
 							},
 							"Filename": {
-								"value": "@variables('Filename')",
+								"value": "@variables('FileName')",
 								"type": "Expression"
 							}
 						}
 					}
 				]
-			},
-			{
-				"name": "Set Filename",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "Filename",
-					"value": {
-						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
-						"type": "Expression"
-					}
-				}
 			}
 		],
 		"parameters": {
