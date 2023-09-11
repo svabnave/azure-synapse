@@ -89,8 +89,7 @@
 		],
 		"parameters": {
 			"tablename": {
-				"type": "string",
-				"defaultValue": "MetaData"
+				"type": "string"
 			}
 		},
 		"variables": {
