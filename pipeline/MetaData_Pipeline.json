@@ -14,7 +14,7 @@
 				"typeProperties": {
 					"variableName": "Filename",
 					"value": {
-						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
+						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time','.xml'))",
 						"type": "Expression"
 					}
 				}
