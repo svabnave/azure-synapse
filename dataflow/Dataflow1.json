@@ -12,15 +12,56 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "select1"
+				}
+			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx} as ({@Version} as double, {http://schemas.microsoft.com/ado/2007/06/edmx,DataServices} as ({http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,@DataServiceVersion} as double, {http://schemas.microsoft.com/ado/2008/09/edm,Schema} as ({@Namespace} as string, {http://schemas.microsoft.com/ado/2008/09/edm,EntityContainer} as ({@Name} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,@IsDefaultEntityContainer} as boolean, {http://schemas.microsoft.com/ado/2008/09/edm,EntitySet} as ({@EntityType} as string, {@Name} as string, {http://www.sap.com/Protocols/SAPData,@addressable} as boolean, {http://www.sap.com/Protocols/SAPData,@content-version} as boolean, {http://www.sap.com/Protocols/SAPData,@creatable} as boolean, {http://www.sap.com/Protocols/SAPData,@deletable} as boolean, {http://www.sap.com/Protocols/SAPData,@pageable} as boolean, {http://www.sap.com/Protocols/SAPData,@requires-filter} as boolean, {http://www.sap.com/Protocols/SAPData,@updatable} as boolean)[], {http://www.sap.com/Protocols/SAPData,@supported-formats} as string), {http://schemas.microsoft.com/ado/2008/09/edm,EntityType} as ({@Name} as string, {http://schemas.microsoft.com/ado/2008/09/edm,Key} as ({http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef} as ({@Name} as string)[]), {http://schemas.microsoft.com/ado/2008/09/edm,Property} as ({@MaxLength} as short, {@Name} as string, {@Nullable} as boolean, {@Precision} as short, {@Scale} as short, {@Type} as string, {http://www.sap.com/Protocols/SAPData,@creatable} as boolean, {http://www.sap.com/Protocols/SAPData,@filterable} as boolean, {http://www.sap.com/Protocols/SAPData,@label} as string, {http://www.sap.com/Protocols/SAPData,@semantics} as string, {http://www.sap.com/Protocols/SAPData,@sortable} as boolean, {http://www.sap.com/Protocols/SAPData,@unicode} as boolean, {http://www.sap.com/Protocols/SAPData,@unit} as string, {http://www.sap.com/Protocols/SAPData,@updatable} as boolean)[], {http://www.sap.com/Protocols/SAPData,@content-version} as boolean)[], {http://www.sap.com/Protocols/SAPData,@schema-version} as boolean, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string)[])))",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
 				"     validationMode: 'none',",
-				"     namespaces: true) ~> source1"
+				"     namespaces: true) ~> source1",
+				"source1 foldDown(unroll({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property}),",
+				"     mapColumn(",
+				"          each({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property},match(true()),",
+				"               replace(replace($$,'http://www.sap.com/Protocols/SAPData,',''),'@','') = $$)",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 select(mapColumn(",
+				"          MaxLength,",
+				"          Column_Name = Name,",
+				"          Data_Type = Type,",
+				"          English_Name = label",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
