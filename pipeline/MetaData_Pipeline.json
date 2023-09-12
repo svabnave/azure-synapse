@@ -120,9 +120,15 @@
 									"type": "Expression"
 								}
 							},
-							"sink1": {
+							"Metadata": {
 								"Directoryname": {
-									"value": "@concat(pipeline().parameters.tablename,'/Processed')",
+									"value": "@concat(pipeline().parameters.tablename,'/Procesed')",
+									"type": "Expression"
+								}
+							},
+							"KeyCols": {
+								"Directoryname": {
+									"value": "@concat(pipeline().parameters.tablename,'/Key_Cols')",
 									"type": "Expression"
 								}
 							}
