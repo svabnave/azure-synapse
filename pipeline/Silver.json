@@ -17,7 +17,18 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Metadata_Silver",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"MetadataCols": {
+								"Directoryname": "Metadata/Processed"
+							},
+							"KeyCols": {
+								"Directoryname": "Metadata/Key_Cols"
+							},
+							"sink1": {
+								"Directoryname": "Metadata/Key_Cols_Silver"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
