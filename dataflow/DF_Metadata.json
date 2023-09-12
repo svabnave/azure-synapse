@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -43,19 +46,22 @@
 				"     mapColumn(",
 				"          Table_Name = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{@Name},",
 				"          each({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property},match(true()),",
-				"               replace(replace($$, 'http://www.sap.com/Protocols/SAPData,@', ''),'@','') = $$)",
+				"               replace(replace($$,'http://www.sap.com/Protocols/SAPData,@',''),'@','') = $$),",
+				"          Key_Columns = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef}.{@Name}",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
-				"flatten1 select(mapColumn(",
+				"derivedColumn1 select(mapColumn(",
 				"          Table_Name,",
 				"          MaxLength,",
 				"          Column_Name = Name,",
 				"          Data_Type = Type,",
-				"          English_Name = label",
+				"          English_Name = label,",
+				"          Key_Columns",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
+				"flatten1 derive(Key_Columns = toString(Key_Columns)) ~> derivedColumn1",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
