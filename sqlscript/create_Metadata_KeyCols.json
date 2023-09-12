@@ -1,0 +1,17 @@
+{
+	"name": "create_Metadata_KeyCols",
+	"properties": {
+		"content": {
+			"query": "\nDROP EXTERNAL TABLE mySchema.Metadata_Key_Cols\nCREATE EXTERNAL TABLE mySchema.Metadata (\n     Table_Name VARCHAR(MAX), \n     Name as VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Metadata/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mysqldb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
