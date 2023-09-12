@@ -122,7 +122,7 @@
 							},
 							"Metadata": {
 								"Directoryname": {
-									"value": "@concat(pipeline().parameters.tablename,'/Procesed')",
+									"value": "@concat(pipeline().parameters.tablename,'/Processed')",
 									"type": "Expression"
 								}
 							},
