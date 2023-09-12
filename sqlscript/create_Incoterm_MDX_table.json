@@ -2,7 +2,7 @@
 	"name": "create_Incoterm_MDX_table",
 	"properties": {
 		"content": {
-			"query": "DROP EXTERNAL TABLE mySchema.Incoterm_MDX\nCREATE EXTERNAL TABLE Incoterm_MDX (\n     Bezei VARCHAR(MAX), \n     Inco1 VARCHAR(MAX), \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Incoterm_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+			"query": "DROP EXTERNAL TABLE mySchema.Incoterm_MDX\nCREATE EXTERNAL TABLE Incoterm_MDX (\n     Bezei VARCHAR(MAX), \n     Inco1 VARCHAR(MAX), \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Incoterm_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
 			"metadata": {
 				"language": "sql"
 			},
