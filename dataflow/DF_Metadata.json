@@ -30,7 +30,7 @@
 			],
 			"transformations": [
 				{
-					"name": "flatten1"
+					"name": "flattenMetadata"
 				},
 				{
 					"name": "select1"
@@ -39,7 +39,13 @@
 					"name": "derivedColumn1"
 				},
 				{
-					"name": "flatten2"
+					"name": "flattenKelyCols"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -60,7 +66,7 @@
 				"               replace(replace($$,'http://www.sap.com/Protocols/SAPData,@',''),'@','') = $$)",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"     skipDuplicateMapOutputs: false) ~> flattenMetadata",
 				"derivedColumn1 select(mapColumn(",
 				"          Table_Name,",
 				"          MaxLength,",
@@ -71,7 +77,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"flatten1 derive(Key_Columns = toString(Key_Columns)) ~> derivedColumn1",
+				"flattenMetadata derive(Key_Columns = toString(Key_Columns)) ~> derivedColumn1",
 				"source1 foldDown(unroll({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef}),",
 				"     mapColumn(",
 				"          Table_Name = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{@Name},",
@@ -79,7 +85,19 @@
 				"               replace($$,'@','') = $$)",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten2",
+				"     skipDuplicateMapOutputs: false) ~> flattenKelyCols",
+				"flattenKelyCols, select1 lookup(Name == Column_Name,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(Column_Name, true),",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 select(mapColumn(",
+				"          Table_Name = flattenKelyCols@Table_Name,",
+				"          Name,",
+				"          English_Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
@@ -88,7 +106,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> Metadata",
-				"flatten2 sink(allowSchemaDrift: true,",
+				"select2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     umask: 0022,",
