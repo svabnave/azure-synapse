@@ -3,11 +3,70 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "IncotermMDXSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "SalesGroupMDXSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "RouteMDXSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "SalesOfficeMDXSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "ShippingTypeMDXSource"
+				}
+			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				""
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> IncotermMDXSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> SalesGroupMDXSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> RouteMDXSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> SalesOfficeMDXSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> ShippingTypeMDXSource"
 			]
 		}
 	}
