@@ -16,17 +16,23 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Metadata_Silver",
+						"referenceName": "Silver_DF",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"MetadataCols": {
-								"Directoryname": "Metadata/Processed"
+							"IncotermMDXSource": {
+								"Directoryname": "Incoterm_MDX/Processed"
 							},
-							"KeyCols": {
-								"Directoryname": "Metadata/Key_Cols"
+							"SalesGroupMDXSource": {
+								"Directoryname": "SalesGroup_MDX/Processed"
 							},
-							"sink1": {
-								"Directoryname": "Metadata/Key_Cols_Silver"
+							"RouteMDXSource": {
+								"Directoryname": "Route_MDX/Processed"
+							},
+							"SalesOfficeMDXSource": {
+								"Directoryname": "SalesOffice_MDX/Processed"
+							},
+							"ShippingTypeMDXSource": {
+								"Directoryname": "ShippingType_MDX/Processed"
 							}
 						}
 					},
