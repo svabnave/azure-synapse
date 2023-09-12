@@ -2,7 +2,7 @@
 	"name": "create_Metadata_KeyCols",
 	"properties": {
 		"content": {
-			"query": "\nDROP EXTERNAL TABLE mySchema.Metadata_Key_Cols\nCREATE EXTERNAL TABLE mySchema.Metadata_Key_Cols (\n     Table_Name VARCHAR(MAX), \n     Name  VARCHAR(MAX),\n     English_Name  VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Metadata/Key_Cols_Silver/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+			"query": "\nDROP EXTERNAL TABLE mySchema.Metadata_Key_Cols\nCREATE EXTERNAL TABLE mySchema.Metadata_Key_Cols (\n     Table_Name VARCHAR(MAX), \n     Name  VARCHAR(MAX),\n     English_Name  VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Metadata/Key_Cols/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
 			"metadata": {
 				"language": "sql"
 			},
