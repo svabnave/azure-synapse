@@ -16,25 +16,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Silver_DF",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"IncotermMDXSource": {
-								"Directoryname": "Incoterm_MDX/Processed"
-							},
-							"SalesGroupMDXSource": {
-								"Directoryname": "SalesGroup_MDX/Processed"
-							},
-							"RouteMDXSource": {
-								"Directoryname": "Route_MDX/Processed"
-							},
-							"SalesOfficeMDXSource": {
-								"Directoryname": "SalesOffice_MDX/Processed"
-							},
-							"ShippingTypeMDXSource": {
-								"Directoryname": "ShippingType_MDX/Processed"
-							}
-						}
+						"referenceName": "Metadata_Silver",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
