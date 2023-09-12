@@ -138,8 +138,7 @@
 		],
 		"parameters": {
 			"tablename": {
-				"type": "string",
-				"defaultValue": "Incoterm_MDX"
+				"type": "string"
 			}
 		},
 		"variables": {
