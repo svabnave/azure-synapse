@@ -1,0 +1,17 @@
+{
+	"name": "create_SalesOffice_MDX",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE mySchema.SalesOffice_MDX\nCREATE EXTERNAL TABLE SalesOffice_MDX(\n     Vkbur VARCHAR(MAX), \n     Bezei VARCHAR(MAX), \n     Adrnr VARCHAR(MAX), \n\n     \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'SalesOffice_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
