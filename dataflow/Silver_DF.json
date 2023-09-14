@@ -26,6 +26,12 @@
 				},
 				{
 					"name": "AL10"
+				},
+				{
+					"name": "aggregate3"
+				},
+				{
+					"name": "exists1"
 				}
 			],
 			"scriptLines": [
@@ -60,7 +66,12 @@
 				"     broadcast: 'auto')~> join1",
 				"join1 split(WorkCenterMDX@Werks == 'AL10',",
 				"     WorkCenterMDX@Werks == 'FE10',",
-				"     disjoint: false) ~> AL10@(AL10, FE10, oTHERS)"
+				"     disjoint: false) ~> AL10@(AL10, FE10, oTHERS)",
+				"AL10@oTHERS aggregate(groupBy(Wckat),",
+				"     Count = count(Arbpl)) ~> aggregate3",
+				"AL10@FE10, AL10@AL10 exists(AL10@FE10@Wckat == AL10@AL10@Wckat,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> exists1"
 			]
 		}
 	}
