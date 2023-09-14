@@ -19,20 +19,11 @@
 						"referenceName": "Silver_DF",
 						"type": "DataFlowReference",
 						"datasetParameters": {
-							"IncotermMDXSource": {
-								"Directoryname": "Incoterm_MDX/Processed"
+							"WorkCenterMDX": {
+								"Directoryname": "WorkCenter_MDX/Processed"
 							},
-							"SalesGroupMDXSource": {
-								"Directoryname": "SalesGroup_MDX/Processed"
-							},
-							"RouteMDXSource": {
-								"Directoryname": "Route_MDX/Processed"
-							},
-							"SalesOfficeMDXSource": {
-								"Directoryname": "SalesOffice_MDX/Processed"
-							},
-							"ShippingTypeMDXSource": {
-								"Directoryname": "ShippingType_MDX/Processed"
+							"LocationMDXSource": {
+								"Directoryname": "Location_MDX/Processed"
 							}
 						}
 					},

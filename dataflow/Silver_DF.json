@@ -9,35 +9,14 @@
 						"referenceName": "Generic_DS_ADL_Parquet",
 						"type": "DatasetReference"
 					},
-					"name": "IncotermMDXSource"
+					"name": "WorkCenterMDX"
 				},
 				{
 					"dataset": {
 						"referenceName": "Generic_DS_ADL_Parquet",
 						"type": "DatasetReference"
 					},
-					"name": "SalesGroupMDXSource"
-				},
-				{
-					"dataset": {
-						"referenceName": "Generic_DS_ADL_Parquet",
-						"type": "DatasetReference"
-					},
-					"name": "RouteMDXSource"
-				},
-				{
-					"dataset": {
-						"referenceName": "Generic_DS_ADL_Parquet",
-						"type": "DatasetReference"
-					},
-					"name": "SalesOfficeMDXSource"
-				},
-				{
-					"dataset": {
-						"referenceName": "Generic_DS_ADL_Parquet",
-						"type": "DatasetReference"
-					},
-					"name": "ShippingTypeMDXSource"
+					"name": "LocationMDXSource"
 				}
 			],
 			"sinks": [],
@@ -51,7 +30,7 @@
 				"     validateSchema: false,",
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> IncotermMDXSource",
+				"     format: 'parquet') ~> WorkCenterMDX",
 				"source(output(",
 				"          Bezei as string,",
 				"          Vkgrp as string",
@@ -60,34 +39,7 @@
 				"     validateSchema: false,",
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> SalesGroupMDXSource",
-				"source(output(",
-				"          Bezei as string,",
-				"          Route as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> RouteMDXSource",
-				"source(output(",
-				"          Adrnr as integer,",
-				"          Bezei as string,",
-				"          Vkbur as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     inferDriftedColumnTypes: true,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> SalesOfficeMDXSource",
-				"source(output(",
-				"          Bezei as string,",
-				"          Vsart as short",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     inferDriftedColumnTypes: true,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> ShippingTypeMDXSource"
+				"     format: 'parquet') ~> LocationMDXSource"
 			]
 		}
 	}
