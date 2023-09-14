@@ -20,11 +20,23 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "AL10"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
-				"          Bezei as string,",
-				"          Inco1 as string",
+				"          Arbpl as string,",
+				"          Kostl as integer,",
+				"          Ktext as string,",
+				"          Lstar as string,",
+				"          Verwe as string,",
+				"          Wckat as string,",
+				"          Werks as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
@@ -32,14 +44,23 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> WorkCenterMDX",
 				"source(output(",
-				"          Bezei as string,",
-				"          Vkgrp as string",
+				"          Ktext as string,",
+				"          Stand as string,",
+				"          Werks as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> LocationMDXSource"
+				"     format: 'parquet') ~> LocationMDXSource",
+				"WorkCenterMDX, LocationMDXSource join(WorkCenterMDX@Werks == LocationMDXSource@Werks,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 split(WorkCenterMDX@Ktext == 'AL10',",
+				"     WorkCenterMDX@Ktext == 'FE10',",
+				"     disjoint: false) ~> AL10@(AL10, FE10, oTHERS)"
 			]
 		}
 	}
