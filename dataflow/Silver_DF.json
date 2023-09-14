@@ -58,8 +58,8 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
-				"join1 split(WorkCenterMDX@Ktext == 'AL10',",
-				"     WorkCenterMDX@Ktext == 'FE10',",
+				"join1 split(WorkCenterMDX@Werks == 'AL10',",
+				"     WorkCenterMDX@Werks == 'FE10',",
 				"     disjoint: false) ~> AL10@(AL10, FE10, oTHERS)"
 			]
 		}
