@@ -1,0 +1,17 @@
+{
+	"name": "create_MaterialStorageLocation_MDX_table",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE mySchema.MaterialStorageLocation_MDX\nCREATE EXTERNAL TABLE MaterialStorageLocation_MDX(\n     Arbpl VARCHAR(MAX), \n     Kostl VARCHAR(MAX), \n     Ktext VARCHAR(MAX), \n     Lstar VARCHAR(MAX),\n     Verwe VARCHAR(MAX), \n     WcKat VARCHAR(MAX),\n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'MaterialStorageLocation_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
