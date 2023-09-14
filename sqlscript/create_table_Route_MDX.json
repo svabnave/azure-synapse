@@ -1,0 +1,17 @@
+{
+	"name": "create_table_Route_MDX",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE mySchema.Route_MDX\nCREATE EXTERNAL TABLE Route_MDX(\n     Route VARCHAR(MAX), \n     Bezei VARCHAR(MAX), \n     \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Route_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
