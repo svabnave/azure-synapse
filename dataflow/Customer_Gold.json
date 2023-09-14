@@ -19,7 +19,15 @@
 					"name": "Contacts"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "DhandaSink"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
@@ -62,7 +70,15 @@
 				"join1 aggregate(groupBy(Orders@email),",
 				"     First_name = first(First_name),",
 				"          Last_name = last(Last_name),",
-				"          Total_Business = sum(toFloat(Total_Price))) ~> Dhanda"
+				"          Total_Business = sum(toFloat(Total_Price))) ~> Dhanda",
+				"Dhanda sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DhandaSink"
 			]
 		}
 	}
