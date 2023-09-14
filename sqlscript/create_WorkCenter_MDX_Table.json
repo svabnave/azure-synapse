@@ -1,0 +1,17 @@
+{
+	"name": "create_WorkCenter_MDX_Table",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE mySchema.WorkCenter_MDX\nCREATE EXTERNAL TABLE WorkCenter_MDX_new(\n     Arbpl VARCHAR(MAX), \n     Kostl VARCHAR(MAX), \n     Ktext VARCHAR(MAX), \n     Lstar VARCHAR(MAX),\n     Verwe VARCHAR(MAX), \n     WcKat VARCHAR(MAX),\n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'WorkCenter_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mysqldb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
