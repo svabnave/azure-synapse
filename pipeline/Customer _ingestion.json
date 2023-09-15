@@ -58,7 +58,7 @@
 									"referenceName": "Generic_XL_ADL",
 									"type": "DatasetReference",
 									"parameters": {
-										"File_Name": "Customer.xlsx",
+										"File_Name": "Customers.xlsx",
 										"Sheet_Name": {
 											"value": "@item()",
 											"type": "Expression"
