@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@item(pipeline().parameters.tablenames)",
+						"value": "@pipeline().parameters.tablenames",
 						"type": "Expression"
 					},
 					"activities": [
@@ -27,16 +27,11 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "XmlSource",
+									"type": "ExcelSource",
 									"storeSettings": {
 										"type": "AzureBlobFSReadSettings",
 										"recursive": true,
 										"enablePartitionDiscovery": false
-									},
-									"formatSettings": {
-										"type": "XmlReadSettings",
-										"validationMode": "none",
-										"namespaces": true
 									}
 								},
 								"sink": {
@@ -48,15 +43,24 @@
 										"type": "ParquetWriteSettings"
 									}
 								},
-								"enableStaging": false
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
 							},
 							"inputs": [
 								{
-									"referenceName": "Generic_DS_ADL_xml",
+									"referenceName": "Generic_XL_ADL",
 									"type": "DatasetReference",
 									"parameters": {
-										"Directoryname": {
-											"value": "@pipeline().parameters.tablenames",
+										"File_Name": "Customer.xlsx",
+										"Sheet_Name": {
+											"value": "@item()",
 											"type": "Expression"
 										}
 									}
@@ -68,7 +72,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"Directoryname": {
-											"value": "@pipeline().parameters.tablenames",
+											"value": "@item()",
 											"type": "Expression"
 										}
 									}
