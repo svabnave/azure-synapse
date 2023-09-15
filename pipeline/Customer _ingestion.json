@@ -1,0 +1,93 @@
+{
+	"name": "Customer _ingestion",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@item(pipeline().parameters.tablenames)",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy Customer data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "XmlSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "XmlReadSettings",
+										"validationMode": "none",
+										"namespaces": true
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Generic_DS_ADL_xml",
+									"type": "DatasetReference",
+									"parameters": {
+										"Directoryname": {
+											"value": "@pipeline().parameters.tablenames",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Generic_DS_ADL_Parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"Directoryname": {
+											"value": "@pipeline().parameters.tablenames",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"tablenames": {
+				"type": "array",
+				"defaultValue": [
+					"Contacts",
+					"Orders"
+				]
+			}
+		},
+		"annotations": []
+	}
+}
