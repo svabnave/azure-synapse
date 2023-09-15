@@ -15,6 +15,21 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Customer_receipt",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"Contacts": {
+								"Directoryname": "Contacts"
+							},
+							"Orders": {
+								"Directoryname": "Orders"
+							},
+							"sink1": {
+								"Directoryname": "Receipts"
+							}
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
