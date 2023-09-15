@@ -1,0 +1,110 @@
+{
+	"name": "Customer_receipt",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "Contacts"
+				},
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "Orders"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Generic_DS_ADL_Parquet",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          First_name as string,",
+				"          Last_name as string,",
+				"          email as string,",
+				"          phone as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> Contacts",
+				"source(output(",
+				"          Order_ID as string,",
+				"          Order_Date as string,",
+				"          email as string,",
+				"          Product as string,",
+				"          Colour as string,",
+				"          Unit_Cost as string,",
+				"          Quantity as string,",
+				"          Total_Price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> Orders",
+				"Contacts, Orders join(Contacts@email == Orders@email,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 aggregate(groupBy(Order_ID),",
+				"     Total_Price = sum(toFloat(Total_Price)),",
+				"          First_name = first(First_name),",
+				"          Last_name = last(Last_name),",
+				"          Order_Date = first(Order_Date),",
+				"          email = first(Orders@email),",
+				"          phone = first(phone),",
+				"          Product = first(Product),",
+				"          Colour = first(Colour),",
+				"          Unit_Cost = first(Unit_Cost),",
+				"          Quantity = first(Quantity)) ~> aggregate1",
+				"aggregate1 select(mapColumn(",
+				"          Order_ID,",
+				"          Order_Date,",
+				"          First_name,",
+				"          Last_name,",
+				"          Total_Price,",
+				"          email,",
+				"          phone,",
+				"          Product,",
+				"          Colour,",
+				"          Unit_Cost,",
+				"          Quantity",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
