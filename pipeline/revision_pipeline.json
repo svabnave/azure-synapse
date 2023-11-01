@@ -81,7 +81,7 @@
 				"typeProperties": {
 					"variableName": "setcurrenttime",
 					"value": {
-						"value": "@concat(pipeline().parameters.Filename,'_','W.Europe standard time','.xml')",
+						"value": "@concat(pipeline().parameters.Filename,'_',utcnow(),'W.Europe standard time','.xml')",
 						"type": "Expression"
 					}
 				}
