@@ -108,7 +108,16 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "revision_Dataflow",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"Directoryname": "Incoterm_MDX",
+								"Filename": "Incoterm_MDX_2023-11-01T12:32:53.9016806.xml"
+							},
+							"sink1": {
+								"Directoryname": "Processed"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
