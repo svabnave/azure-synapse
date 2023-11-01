@@ -115,7 +115,7 @@
 								"Filename": "Incoterm_MDX_2023-11-01T12:32:53.9016806.xml"
 							},
 							"sink1": {
-								"Directoryname": "Processed"
+								"Directoryname": "Incoterm_MDX/Processed"
 							}
 						}
 					},
