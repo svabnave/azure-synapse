@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -55,12 +62,29 @@
 								"type": "Expression"
 							},
 							"Filename": {
-								"value": "@pipeline().parameters.Filename",
+								"value": "@variables('setcurrenttime')",
 								"type": "Expression"
 							}
 						}
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "setcurrenttime",
+					"value": {
+						"value": "@concat(pipeline().parameters.Filename,'_','W.Europe standard time','.xml')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -69,6 +93,11 @@
 			},
 			"Directoryname": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"setcurrenttime": {
+				"type": "String"
 			}
 		},
 		"annotations": []
