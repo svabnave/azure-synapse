@@ -58,7 +58,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Directoryname": {
-								"value": "@pipeline().parameters.Directoryname",
+								"value": "@pipeline().parameters.tablename",
 								"type": "Expression"
 							},
 							"Filename": {
@@ -81,17 +81,14 @@
 				"typeProperties": {
 					"variableName": "setcurrenttime",
 					"value": {
-						"value": "@concat(pipeline().parameters.Filename,'_',utcnow(),'W.Europe standard time','.xml')",
+						"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
 						"type": "Expression"
 					}
 				}
 			}
 		],
 		"parameters": {
-			"Filename": {
-				"type": "string"
-			},
-			"Directoryname": {
+			"tablename": {
 				"type": "string"
 			}
 		},
