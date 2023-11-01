@@ -48,13 +48,26 @@
 				"outputs": [
 					{
 						"referenceName": "Generic_DS_ADL_destination",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Directoryname": {
+								"value": "@pipeline().parameters.Directoryname",
+								"type": "Expression"
+							},
+							"Filename": {
+								"value": "@pipeline().parameters.Filename",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
 		],
 		"parameters": {
 			"Filename": {
+				"type": "string"
+			},
+			"Directoryname": {
 				"type": "string"
 			}
 		},
