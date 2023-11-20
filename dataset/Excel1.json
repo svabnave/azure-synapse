@@ -1,0 +1,31 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysyntest",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Content",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hourvalues_20231120_191333.xlsx",
+				"folderPath": "Agva",
+				"fileSystem": "staging"
+			}
+		},
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
+	}
+}
