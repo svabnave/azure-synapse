@@ -43,16 +43,13 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "enddate",
-					"value": "06-08-2023  05:00:00 AM"
+					"variableName": "startdate",
+					"value": "04-08-2023  01:00:00 AM"
 				}
 			}
 		],
 		"variables": {
 			"startdate": {
-				"type": "String"
-			},
-			"enddate": {
 				"type": "String"
 			}
 		},
