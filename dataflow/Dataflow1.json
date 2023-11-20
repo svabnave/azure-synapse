@@ -15,10 +15,6 @@
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				"parameters{",
-				"     startdate as date,",
-				"     enddate as date",
-				"}",
 				"source(output(",
 				"          Time as date 'dd.MM.yyyy',",
 				"          Forbruk as float '000.##',",
