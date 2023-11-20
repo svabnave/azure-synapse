@@ -66,6 +66,8 @@
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Monthly_Bill',",
 				"     deltaTruncate: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
