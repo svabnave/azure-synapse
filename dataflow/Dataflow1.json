@@ -27,6 +27,12 @@
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -42,8 +48,10 @@
 				"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
 				"source1 derive(KWt_Consumption = Forbruk,",
 				"          Price_Per_Kwt = Pris,",
-				"          Price = Forbruk*Pris) ~> derivedColumn1",
+				"          Price = Forbruk*Pris,",
+				"          Month = month(Time)) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
+				"          Month,",
 				"          Time,",
 				"          KWt_Consumption,",
 				"          Price_Per_Kwt,",
@@ -51,7 +59,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"select1 aggregate(groupBy(Month),",
+				"     Total_KWt_Consumption = sum(KWt_Consumption),",
+				"          {Total Price} = sum(Price)) ~> aggregate1",
+				"aggregate1 filter(Month==9) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     umask: 0022,",
