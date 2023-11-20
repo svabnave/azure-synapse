@@ -14,7 +14,8 @@
 				"fileName": "hourvalues_20231120_191333.xlsx",
 				"folderPath": "Agva",
 				"fileSystem": "staging"
-			}
+			},
+			"firstRowAsHeader": true
 		},
 		"schema": [
 			{
