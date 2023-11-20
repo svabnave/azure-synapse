@@ -21,7 +21,14 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          Time as timestamp 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\'',",
@@ -33,7 +40,18 @@
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
 				"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
-				"source1 sink(allowSchemaDrift: true,",
+				"source1 derive(KWt_Consumption = Forbruk,",
+				"          Price_Per_Kwt = Pris,",
+				"          Price = Forbruk*Pris) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          Time,",
+				"          KWt_Consumption,",
+				"          Price_Per_Kwt,",
+				"          Price",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     umask: 0022,",
