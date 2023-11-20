@@ -30,11 +30,14 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          Time as timestamp 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\'',",
+				"          Time as string,",
 				"          Forbruk as double,",
 				"          Pris as double",
 				"     ),",
@@ -43,10 +46,11 @@
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false,",
 				"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
-				"source1 derive(KWt_Consumption = Forbruk,",
+				"source1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+				"          Time = toDate(left(Time,10),'yyyy-MM-dd'),",
+				"          KWt_Consumption = Forbruk,",
 				"          Price_Per_Kwt = Pris,",
-				"          Price = Forbruk*Pris,",
-				"          Month = month(Time)) ~> derivedColumn1",
+				"          Price = Forbruk*Pris) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
 				"          Month,",
 				"          Time,",
@@ -59,7 +63,8 @@
 				"select1 aggregate(groupBy(Month),",
 				"     Total_KWt_Consumption = sum(KWt_Consumption),",
 				"          Total_Price_in_NOK = sum(Price)/100) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 sort(asc(Month, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
