@@ -64,7 +64,7 @@
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
 				"     folderPath: 'Agva/Monthly_Bill',",
-				"     deltaTruncate: true,",
+				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
