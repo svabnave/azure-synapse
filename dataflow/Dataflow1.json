@@ -30,9 +30,6 @@
 				},
 				{
 					"name": "aggregate1"
-				},
-				{
-					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -61,9 +58,8 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 aggregate(groupBy(Month),",
 				"     Total_KWt_Consumption = sum(KWt_Consumption),",
-				"          Total_Price = sum(Price)) ~> aggregate1",
-				"aggregate1 filter(Month==9) ~> filter1",
-				"filter1 sink(allowSchemaDrift: true,",
+				"          Total_Price_in_NOK = sum(Price)/100) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
