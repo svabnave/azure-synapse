@@ -83,7 +83,7 @@
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Yearly_bill',",
+				"     folderPath: 'Agva/Monthly_Bill',",
 				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
