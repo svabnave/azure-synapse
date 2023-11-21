@@ -10,6 +10,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source2"
 				}
 			],
 			"sinks": [
@@ -56,6 +63,9 @@
 				},
 				{
 					"name": "RemoveDuplicates"
+				},
+				{
+					"name": "exists1"
 				}
 			],
 			"scriptLines": [
@@ -68,7 +78,23 @@
 				"     validateSchema: false,",
 				"     inferDriftedColumnTypes: true,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+				"source(output(",
+				"          Time as string,",
+				"          Month_Name as string,",
+				"          Date as date,",
+				"          Month as integer,",
+				"          KW_Consumption as double,",
+				"          Price_per_kw as double,",
+				"          Price as double,",
+				"          Year as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/All_Dates') ~> source2",
+				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
 				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
 				"          KW_Consumption = Forbruk,",
 				"          Price_per_kw = Pris,",
@@ -108,6 +134,9 @@
 				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
 				"select1 aggregate(groupBy(Time),",
 				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+				"source1, source2 exists(source1@Time == source2@Time,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1",
 				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
