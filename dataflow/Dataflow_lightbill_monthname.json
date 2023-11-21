@@ -53,6 +53,9 @@
 				},
 				{
 					"name": "alterRow1"
+				},
+				{
+					"name": "RemoveDuplicates"
 				}
 			],
 			"scriptLines": [
@@ -102,7 +105,9 @@
 				"select1 aggregate(groupBy(Year),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate2",
-				"select1 alterRow(upsertIf(true())) ~> alterRow1",
+				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+				"select1 aggregate(groupBy(Time),",
+				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
 				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
