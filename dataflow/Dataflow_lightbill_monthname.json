@@ -50,6 +50,9 @@
 				},
 				{
 					"name": "aggregate2"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -99,6 +102,7 @@
 				"select1 aggregate(groupBy(Year),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate2",
+				"select1 alterRow(upsertIf(true())) ~> alterRow1",
 				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
@@ -136,7 +140,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> Yearly",
-				"select1 sink(allowSchemaDrift: true,",
+				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
@@ -146,9 +150,10 @@
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
+				"     keys:['Time'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
