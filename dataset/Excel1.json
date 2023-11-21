@@ -8,6 +8,7 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
+			"sheetName": "Content",
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "hourvalues_20231121_204524.xlsx",
