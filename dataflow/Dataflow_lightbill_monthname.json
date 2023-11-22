@@ -26,20 +26,6 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "Monthly"
-				},
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "Yearly"
-				},
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "AllDates"
 				}
 			],
 			"transformations": [
@@ -56,16 +42,10 @@
 					"name": "derivedColumn2"
 				},
 				{
-					"name": "aggregate2"
-				},
-				{
-					"name": "alterRow1"
-				},
-				{
-					"name": "RemoveDuplicates"
-				},
-				{
 					"name": "exists1"
+				},
+				{
+					"name": "AlterRow1"
 				}
 			],
 			"scriptLines": [
@@ -128,57 +108,15 @@
 				"iif(Month == 11, 'NOV',\r",
 				"iif(Month == 8, 'AUG','')\r",
 				")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
-				"select1 aggregate(groupBy(Year),",
-				"     Total_KW_Consumption = sum(KW_Consumption),",
-				"          Total_Price = sum(Price)/100) ~> aggregate2",
-				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
-				"select1 aggregate(groupBy(Time),",
-				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
 				"source1, source2 exists(source1@Time == source2@Time,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate1 alterRow(upsertIf(true())) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Monthly_Bill',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     upsertable: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Monthly",
-				"aggregate2 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Yearly_bill',",
-				"     overwrite: true,",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: true,",
-				"     updateable: false,",
-				"     upsertable: false,",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Yearly",
-				"alterRow1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/All_Dates',",
+				"     folderPath: 'Agva/Monthwisebill',",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
@@ -187,12 +125,12 @@
 				"     insertable: false,",
 				"     updateable: false,",
 				"     upsertable: true,",
-				"     keys:['Time'],",
+				"     keys:['Month_Name'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> AllDates"
+				"     skipDuplicateMapOutputs: true) ~> Monthly"
 			]
 		}
 	}
