@@ -43,6 +43,9 @@
 				},
 				{
 					"name": "aggregate1"
+				},
+				{
+					"name": "AlterRow1"
 				}
 			],
 			"scriptLines": [
@@ -96,8 +99,9 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 aggregate(groupBy(MonthName),",
 				"     KW_Consumption = sum(KW_Consumption),",
-				"          Price = sum(Price_per_KW)/100) ~> aggregate1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"          Price = sum(Price)/100) ~> aggregate1",
+				"aggregate1 alterRow(upsertIf(true())) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
@@ -107,9 +111,10 @@
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
+				"     keys:['MonthName'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
