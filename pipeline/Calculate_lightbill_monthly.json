@@ -17,7 +17,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Dataflow2",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"Filename": "hourvalues_20231122_120302.xlsx"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
