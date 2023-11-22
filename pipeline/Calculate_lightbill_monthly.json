@@ -1,5 +1,5 @@
 {
-	"name": "Calculate_lightbill_Current_month",
+	"name": "Calculate_lightbill_monthly",
 	"properties": {
 		"activities": [
 			{
