@@ -197,7 +197,6 @@
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
 				"     folderPath: 'Agva/Yearly_bill',",
-				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
