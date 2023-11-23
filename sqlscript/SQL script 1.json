@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "CREATE EXTERNAL TABLE [dbo].[Monthly_Bill]\n(\n\t [Month_Name] VARCHAR(20),\n\t [Total_KW_Consumption] FLOAT,\n\t [Total_Price] FLOAT\n)\nWITH\n(\n\tLOCATION = 'Agva/Monthly_Bill',\n\tDATA_SOURCE = [staging],\n\tFILE_FORMAT = [DeltaLakeFormat]\n)\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Agva_Electricity",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
