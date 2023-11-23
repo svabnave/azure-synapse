@@ -3,11 +3,196 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Excel1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "Monthly"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "Yearly"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "AllDates"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "alterRow1"
+				},
+				{
+					"name": "RemoveDuplicates"
+				},
+				{
+					"name": "exists1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          Time as string,",
+				"          Forbruk as double,",
+				"          Pris as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          Time as string,",
+				"          Month_Name as string,",
+				"          Date as date,",
+				"          Month as integer,",
+				"          KW_Consumption as double,",
+				"          Price_per_kw as double,",
+				"          Price as double,",
+				"          Year as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: true,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/All_Dates') ~> source2",
+				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+				"          KW_Consumption = Forbruk,",
+				"          Price_per_kw = Pris,",
+				"          Price = Forbruk*Pris,",
+				"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+				"derivedColumn2 select(mapColumn(",
+				"          Time,",
+				"          Month_Name,",
+				"          Date,",
+				"          Month,",
+				"          KW_Consumption,",
+				"          Price_per_kw,",
+				"          Price,",
+				"          Year",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(Month_Name),",
+				"     Total_KW_Consumption = sum(KW_Consumption),",
+				"          Total_Price = sum(Price)/100) ~> aggregate1",
+				"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
+				"iif(Month == 2, 'FEB',\r",
+				"iif(Month == 3, 'MAR',\r",
+				"iif(Month == 4, 'APR',\r",
+				"iif(Month == 5, 'MAY',\r",
+				"iif(Month == 6, 'JUN',\r",
+				"iif(Month == 7, 'JUL',\r",
+				"iif(Month == 10, 'OCT',\r",
+				"iif(Month == 12, 'DEC',\r",
+				"iif(Month == 9, 'SEP',\r",
+				"iif(Month == 11, 'NOV',\r",
+				"iif(Month == 8, 'AUG','')\r",
+				")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
+				"select1 aggregate(groupBy(Year),",
+				"     Total_KW_Consumption = sum(KW_Consumption),",
+				"          Total_Price = sum(Price)/100) ~> aggregate2",
+				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+				"select1 aggregate(groupBy(Time),",
+				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+				"source1, source2 exists(source1@Time == source2@Time,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Monthly_Bill',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Monthly",
+				"aggregate2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Yearly_bill',",
+				"     overwrite: true,",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Yearly",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/All_Dates',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['Time'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> AllDates"
 			]
 		}
 	}
