@@ -66,6 +66,12 @@
 				},
 				{
 					"name": "exists1"
+				},
+				{
+					"name": "AlterRow2"
+				},
+				{
+					"name": "AlterRow3"
 				}
 			],
 			"scriptLines": [
@@ -137,7 +143,9 @@
 				"source1, source2 exists(source1@Time == source2@Time,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
-				"aggregate1 sink(allowSchemaDrift: true,",
+				"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
+				"aggregate1 alterRow(upsertIf(true())) ~> AlterRow3",
+				"AlterRow3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
@@ -147,15 +155,15 @@
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> Monthly",
-				"aggregate2 sink(allowSchemaDrift: true,",
+				"AlterRow2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
@@ -166,9 +174,9 @@
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
