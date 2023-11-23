@@ -16,7 +16,14 @@
 						"referenceName": "LS_ADL_mysyntest",
 						"type": "LinkedServiceReference"
 					},
-					"name": "source2"
+					"name": "AllDateSource"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "MonthlySource"
 				}
 			],
 			"sinks": [
@@ -99,7 +106,13 @@
 				"     ignoreNoFilesFound: true,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/All_Dates') ~> source2",
+				"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: true,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
 				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
 				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
 				"          KW_Consumption = Forbruk,",
@@ -140,7 +153,7 @@
 				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
 				"select1 aggregate(groupBy(Time),",
 				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
-				"source1, source2 exists(source1@Time == source2@Time,",
+				"source1, AllDateSource exists(source1@Time == AllDateSource@Time,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
 				"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
