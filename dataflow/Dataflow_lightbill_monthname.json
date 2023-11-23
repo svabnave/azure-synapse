@@ -167,7 +167,7 @@
 				"aggregate1, MonthlySource union(byName: true)~> union1",
 				"union1 aggregate(groupBy(Month_Name),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
-				"          Total_Price = sum(Price)/100) ~> aggregate3",
+				"          Total_Price = sum(Price)) ~> aggregate3",
 				"AlterRow3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
