@@ -82,6 +82,9 @@
 				},
 				{
 					"name": "union1"
+				},
+				{
+					"name": "aggregate3"
 				}
 			],
 			"scriptLines": [
@@ -160,8 +163,9 @@
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
 				"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
-				"union1 alterRow(upsertIf(true())) ~> AlterRow3",
+				"aggregate3 alterRow(upsertIf(true())) ~> AlterRow3",
 				"aggregate1, MonthlySource union(byName: true)~> union1",
+				"union1 aggregate(groupBy(Month_Name)) ~> aggregate3",
 				"AlterRow3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
