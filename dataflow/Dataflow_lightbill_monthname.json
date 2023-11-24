@@ -24,6 +24,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "MonthlySource"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "YearlySource"
 				}
 			],
 			"sinks": [
@@ -124,6 +131,12 @@
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
 				"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Yearly_bill') ~> YearlySource",
 				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
 				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
 				"          KW_Consumption = Forbruk,",
