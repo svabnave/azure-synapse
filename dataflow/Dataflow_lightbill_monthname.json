@@ -92,6 +92,12 @@
 				},
 				{
 					"name": "aggregate3"
+				},
+				{
+					"name": "union2"
+				},
+				{
+					"name": "aggregate4"
 				}
 			],
 			"scriptLines": [
@@ -176,7 +182,7 @@
 				"iif(Month == 11, 'NOV',\r",
 				"iif(Month == 8, 'AUG','')\r",
 				")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
-				"select1 aggregate(groupBy(Year),",
+				"union2 aggregate(groupBy(Year),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate2",
 				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
@@ -191,6 +197,10 @@
 				"union1 aggregate(groupBy(Month_Name),",
 				"     Total_KW_Consumption = sum(Total_KW_Consumption),",
 				"          Total_Price = sum(Total_Price)) ~> aggregate3",
+				"aggregate4, YearlySource union(byName: true)~> union2",
+				"select1 aggregate(groupBy(Year),",
+				"     Total_KW_Consumption = sum(KW_Consumption),",
+				"          Total_Price = sum(Price)/100) ~> aggregate4",
 				"AlterRow3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
