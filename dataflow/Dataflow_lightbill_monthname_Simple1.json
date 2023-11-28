@@ -17,37 +17,9 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "AllDateSource"
-				},
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "MonthlySource"
-				},
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "YearlySource"
 				}
 			],
 			"sinks": [
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "Monthly"
-				},
-				{
-					"linkedService": {
-						"referenceName": "LS_ADL_mysyntest",
-						"type": "LinkedServiceReference"
-					},
-					"name": "Yearly"
-				},
 				{
 					"linkedService": {
 						"referenceName": "LS_ADL_mysyntest",
@@ -64,13 +36,7 @@
 					"name": "select1"
 				},
 				{
-					"name": "aggregate1"
-				},
-				{
 					"name": "derivedColumn2"
-				},
-				{
-					"name": "aggregate2"
 				},
 				{
 					"name": "alterRow1"
@@ -80,24 +46,6 @@
 				},
 				{
 					"name": "exists1"
-				},
-				{
-					"name": "AlterRow2"
-				},
-				{
-					"name": "AlterRow3"
-				},
-				{
-					"name": "union1"
-				},
-				{
-					"name": "aggregate3"
-				},
-				{
-					"name": "union2"
-				},
-				{
-					"name": "aggregate4"
 				},
 				{
 					"name": "filterNullConsumption"
@@ -129,28 +77,6 @@
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
 				"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
-				"source(output(",
-				"          Month_Name as string,",
-				"          Total_KW_Consumption as double,",
-				"          Total_Price as double",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: true,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
-				"source(output(",
-				"          Year as integer,",
-				"          Total_KW_Consumption as double,",
-				"          Total_Price as double",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Yearly_bill') ~> YearlySource",
 				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
 				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
 				"          KW_Consumption = Forbruk,",
@@ -169,9 +95,6 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 aggregate(groupBy(Month_Name),",
-				"     Total_KW_Consumption = sum(KW_Consumption),",
-				"          Total_Price = sum(Price)/100) ~> aggregate1",
 				"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
 				"iif(Month == 2, 'FEB',\r",
 				"iif(Month == 3, 'MAR',\r",
@@ -185,64 +108,13 @@
 				"iif(Month == 11, 'NOV',\r",
 				"iif(Month == 8, 'AUG','')\r",
 				")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
-				"union2 aggregate(groupBy(Year),",
-				"     Total_KW_Consumption = sum(Total_KW_Consumption),",
-				"          Total_Price = sum(Total_Price)) ~> aggregate2",
 				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
 				"select1 aggregate(groupBy(Time),",
 				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
 				"filterNullConsumption, AllDateSource exists(source1@Time == AllDateSource@Time,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
-				"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
-				"aggregate3 alterRow(upsertIf(true())) ~> AlterRow3",
-				"aggregate1, MonthlySource union(byName: true)~> union1",
-				"union1 aggregate(groupBy(Month_Name),",
-				"     Total_KW_Consumption = sum(Total_KW_Consumption),",
-				"          Total_Price = sum(Total_Price)) ~> aggregate3",
-				"aggregate4, YearlySource union(byName: true)~> union2",
-				"select1 aggregate(groupBy(Year),",
-				"     Total_KW_Consumption = sum(KW_Consumption),",
-				"          Total_Price = sum(Price)/100) ~> aggregate4",
 				"source1 filter(!isNull(Forbruk)) ~> filterNullConsumption",
-				"AlterRow3 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Monthly_Bill',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: false,",
-				"     updateable: false,",
-				"     upsertable: true,",
-				"     keys:['Month_Name'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Monthly",
-				"AlterRow2 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'delta',",
-				"     fileSystem: 'staging',",
-				"     folderPath: 'Agva/Yearly_bill',",
-				"     mergeSchema: false,",
-				"     autoCompact: false,",
-				"     optimizedWrite: false,",
-				"     vacuum: 0,",
-				"     deletable: false,",
-				"     insertable: false,",
-				"     updateable: false,",
-				"     upsertable: true,",
-				"     keys:['Year'],",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Yearly",
 				"alterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
