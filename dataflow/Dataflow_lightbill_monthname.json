@@ -98,6 +98,9 @@
 				},
 				{
 					"name": "aggregate4"
+				},
+				{
+					"name": "filterNullConsumption"
 				}
 			],
 			"scriptLines": [
@@ -188,7 +191,7 @@
 				"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
 				"select1 aggregate(groupBy(Time),",
 				"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
-				"source1, AllDateSource exists(source1@Time == AllDateSource@Time,",
+				"filterNullConsumption, AllDateSource exists(source1@Time == AllDateSource@Time,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> exists1",
 				"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
@@ -201,6 +204,7 @@
 				"select1 aggregate(groupBy(Year),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate4",
+				"source1 filter(!isNull(Forbruk)) ~> filterNullConsumption",
 				"AlterRow3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
