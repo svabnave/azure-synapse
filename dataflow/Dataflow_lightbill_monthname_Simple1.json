@@ -54,7 +54,7 @@
 			"scriptLines": [
 				"source(output(",
 				"          Time as string,",
-				"          Forbruk as string,",
+				"          Forbruk as double,",
 				"          Pris as double",
 				"     ),",
 				"     allowSchemaDrift: true,",
