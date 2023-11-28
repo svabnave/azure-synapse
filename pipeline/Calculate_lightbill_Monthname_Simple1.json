@@ -1,5 +1,5 @@
 {
-	"name": "Calculate_lightbill_Monthname_Simple",
+	"name": "Calculate_lightbill_Monthname_Simple1",
 	"properties": {
 		"activities": [
 			{
@@ -16,13 +16,44 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Dataflow_lightbill_monthname_Simple",
+						"referenceName": "Dataflow_lightbill_monthname_Simple1",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
 								"Filename": "hourvalues_20231123_144912.xlsx"
 							}
 						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Dataflow_lightbill_monthname_Simple2",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Data flow_Monthname",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Dataflow_lightbill_monthname_Simple2",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
