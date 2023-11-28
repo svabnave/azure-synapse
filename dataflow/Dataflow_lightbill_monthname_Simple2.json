@@ -19,6 +19,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "Monthly"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "Yearly"
 				}
 			],
 			"transformations": [
@@ -27,6 +34,12 @@
 				},
 				{
 					"name": "AlterRow1"
+				},
+				{
+					"name": "aggregate2"
+				},
+				{
+					"name": "alterRow2"
 				}
 			],
 			"scriptLines": [
@@ -50,6 +63,10 @@
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate1",
 				"aggregate1 alterRow(updateIf(true())) ~> AlterRow1",
+				"AllDateSource aggregate(groupBy(Year),",
+				"     Total_KW_Consumption = sum(KW_Consumption),",
+				"          Total_Price = sum(Price)/100) ~> aggregate2",
+				"aggregate2 alterRow(upsertIf(true())) ~> alterRow2",
 				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
@@ -68,7 +85,26 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> Monthly"
+				"     skipDuplicateMapOutputs: true) ~> Monthly",
+				"alterRow2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Yearly_Bill',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['Year'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> Yearly"
 			]
 		}
 	}
