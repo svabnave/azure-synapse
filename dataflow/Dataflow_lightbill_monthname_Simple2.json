@@ -33,17 +33,7 @@
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          Time as string,",
-				"          Month_Name as string,",
-				"          Date as date,",
-				"          Month as integer,",
-				"          KW_Consumption as double,",
-				"          Price_per_kw as double,",
-				"          Price as double,",
-				"          Year as integer",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: true,",
 				"     format: 'delta',",
