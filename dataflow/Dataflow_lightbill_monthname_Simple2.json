@@ -23,35 +23,34 @@
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
-				},
-				{
 					"name": "aggregate1"
 				},
 				{
-					"name": "aggregate3"
+					"name": "AlterRow1"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          Time as string,",
+				"          Month_Name as string,",
+				"          Date as date,",
+				"          Month as integer,",
+				"          KW_Consumption as double,",
+				"          Price_per_kw as double,",
+				"          Price as double,",
+				"          Year as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: true,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
 				"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
-				"AllDateSource derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
-				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
-				"          KW_Consumption = Forbruk,",
-				"          Price_per_kw = Pris,",
-				"          Price = Forbruk*Pris,",
-				"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
-				"derivedColumn1 aggregate(groupBy(Month_Name),",
+				"AllDateSource aggregate(groupBy(Month_Name),",
 				"     Total_KW_Consumption = sum(KW_Consumption),",
 				"          Total_Price = sum(Price)/100) ~> aggregate1",
-				"aggregate1 aggregate(groupBy(Month_Name),",
-				"     Total_KW_Consumption = sum(Total_KW_Consumption),",
-				"          Total_Price = sum(Total_Price)) ~> aggregate3",
-				"aggregate3 sink(allowSchemaDrift: true,",
+				"aggregate1 alterRow(updateIf(true())) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'staging',",
