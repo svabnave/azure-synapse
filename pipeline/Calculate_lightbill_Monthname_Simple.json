@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Dataflow_lightbill_monthname",
+						"referenceName": "Dataflow_lightbill_monthname_Simple",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"source1": {
