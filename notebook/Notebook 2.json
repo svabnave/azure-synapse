@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "94f93c22-8707-48cd-b498-5b5f6c3479cc"
+				"spark.autotune.trackingId": "b01e119e-eb75-48d9-b8d2-e0276732ee55"
 			}
 		},
 		"metadata": {
@@ -190,9 +190,35 @@
 					}
 				},
 				"source": [
-					"df = df.withColumn('Month',month('Date'))"
+					"df = df.withColumn('Month',month('Date'))\r\n",
+					"\r\n",
+					"df = df.withColumn('Year',year('Date'))\r\n",
+					""
 				],
-				"execution_count": 82
+				"execution_count": 95
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\r\n",
+					"if(month == 8):\r\n",
+					"  Monthname==Aug\r\n",
+					"\r\n",
+					"df = df.withColumn('Monthname',month)\r\n",
+					""
+				],
+				"execution_count": 113
 			},
 			{
 				"cell_type": "code",
@@ -211,7 +237,7 @@
 				"source": [
 					"display(df.limit(5))"
 				],
-				"execution_count": 83
+				"execution_count": 114
 			},
 			{
 				"cell_type": "code",
