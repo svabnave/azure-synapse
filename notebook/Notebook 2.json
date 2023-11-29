@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b01e119e-eb75-48d9-b8d2-e0276732ee55"
+				"spark.autotune.trackingId": "5ab73971-e967-4698-897f-62e977b71ddb"
 			}
 		},
 		"metadata": {
@@ -62,20 +62,16 @@
 					}
 				},
 				"source": [
-					"import datetime\r\n",
-					"from pyspark.sql.functions import year, month\r\n",
-					"from pyspark.sql.functions import col\r\n",
-					"from pyspark.sql.types import DateType, TimestampType\r\n",
-					"from pyspark.sql.functions import to_date"
+					"from pyspark.sql.functions import year, month, col, to_date"
 				],
-				"execution_count": 70
+				"execution_count": 115
 			},
 			{
 				"cell_type": "code",
 				"source": [
 					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231123_144912.csv', format='csv', header=True)"
 				],
-				"execution_count": 45
+				"execution_count": 116
 			},
 			{
 				"cell_type": "code",
@@ -93,7 +89,7 @@
 				"source": [
 					"df = df.filter(df.Forbruk!= '')"
 				],
-				"execution_count": 46
+				"execution_count": 117
 			},
 			{
 				"cell_type": "code",
@@ -115,7 +111,7 @@
 					"\r\n",
 					"df = df.drop('Forbruk','Pris')"
 				],
-				"execution_count": 47
+				"execution_count": 118
 			},
 			{
 				"cell_type": "code",
@@ -133,69 +129,13 @@
 				},
 				"source": [
 					"df = df.withColumn('Date',to_date(df.Time[0:10], 'dd.MM.yyyy'))\r\n",
+					"df = df.withColumn('Month',month('Date'))\r\n",
+					"df = df.withColumn('Year',year('Date'))\r\n",
+					"\r\n",
 					"display(df.limit(5))\r\n",
 					""
 				],
-				"execution_count": 81
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"df = df.withColumn('Time2',col('Time').cast('Timestamp'))\r\n",
-					"display(df.limit(5))"
-				],
-				"execution_count": 68
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					""
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"df = df.withColumn('Month',month('Date'))\r\n",
-					"\r\n",
-					"df = df.withColumn('Year',year('Date'))\r\n",
-					""
-				],
-				"execution_count": 95
+				"execution_count": 120
 			},
 			{
 				"cell_type": "code",
