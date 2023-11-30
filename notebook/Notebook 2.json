@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9e1916d3-0b4a-47a0-91eb-493356ab8bdd"
+				"spark.autotune.trackingId": "bd94d5cb-62d3-456d-aa85-f8d6df9957e0"
 			}
 		},
 		"metadata": {
@@ -242,8 +242,10 @@
 				},
 				"source": [
 					"try:\r\n",
+					"    print('Table does not exist. Creating new table...')\r\n",
 					"    df.write.format(\"delta\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
 					"except:\r\n",
+					"    print('Table Found. Updating existing table...')\r\n",
 					"    delta_table = DeltaTable.forPath(spark, \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
 					"\r\n",
 					"    delta_table.alias(\"target\").merge(\r\n",
@@ -254,7 +256,7 @@
 					"        .execute()\r\n",
 					""
 				],
-				"execution_count": 37
+				"execution_count": 40
 			},
 			{
 				"cell_type": "markdown",
