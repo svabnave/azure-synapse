@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "121f5b1d-9048-4c6c-965e-5af9ff75bb3a"
+				"spark.autotune.trackingId": "2c87988d-4161-4aa6-8289-fb5d7a417b56"
 			}
 		},
 		"metadata": {
@@ -91,7 +91,7 @@
 					"    return df\r\n",
 					""
 				],
-				"execution_count": 104
+				"execution_count": 111
 			},
 			{
 				"cell_type": "code",
@@ -100,7 +100,7 @@
 					"df_Monthly = df_Yearly\r\n",
 					"df = df_Yearly"
 				],
-				"execution_count": 108
+				"execution_count": 112
 			},
 			{
 				"cell_type": "code",
@@ -120,7 +120,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 109
+				"execution_count": 113
 			},
 			{
 				"cell_type": "code",
@@ -140,7 +140,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 110
+				"execution_count": 114
 			},
 			{
 				"cell_type": "code",
@@ -156,8 +156,7 @@
 					}
 				},
 				"source": [
-					"\r\n",
-					"arguments = [sum(col(col_name)).alias('Total_'+col_name) for col_name in ['Price','KW_Consumption']]"
+					""
 				],
 				"execution_count": null
 			}
