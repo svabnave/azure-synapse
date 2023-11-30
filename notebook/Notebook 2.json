@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "4bc92164-c243-4c75-a86f-7d8778ec0a97"
+				"spark.autotune.trackingId": "416a16af-bd1e-4d3d-8c4d-0bba862bad09"
 			}
 		},
 		"metadata": {
@@ -78,7 +78,7 @@
 					"from pyspark.sql.functions import year, month, col, to_date, when, last\r\n",
 					"from delta.tables import DeltaTable"
 				],
-				"execution_count": 31
+				"execution_count": 50
 			},
 			{
 				"cell_type": "markdown",
@@ -98,7 +98,7 @@
 				"source": [
 					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231123_144912.csv', format='csv', header=True)"
 				],
-				"execution_count": 18
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -129,7 +129,7 @@
 				"source": [
 					"df = df.filter(df.Forbruk!= '')"
 				],
-				"execution_count": 19
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -345,7 +345,7 @@
 					"    print(result)\r\n",
 					""
 				],
-				"execution_count": 41
+				"execution_count": 42
 			},
 			{
 				"cell_type": "markdown",
