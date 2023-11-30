@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7da29e08-bca8-4f15-9378-5965d7bf980e"
+				"spark.autotune.trackingId": "d502490c-a560-4fda-8502-87a34adb218e"
 			}
 		},
 		"metadata": {
@@ -73,6 +73,24 @@
 					"display(df.limit(6))\r\n",
 					"print(df.count())"
 				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.groupBy(\"Year\").sum(\"KW_Consumption\").show()  "
+				],
 				"execution_count": 4
 			},
 			{
@@ -92,7 +110,7 @@
 					"df = df.withColumn('Total_KW_Consumption',df.sum(KW_Consumption))\r\n",
 					"df = df.withColumn('Total_Price',df.sum(Price)/100)"
 				],
-				"execution_count": 5
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
