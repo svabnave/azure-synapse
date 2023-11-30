@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d502490c-a560-4fda-8502-87a34adb218e"
+				"spark.autotune.trackingId": "c2771a18-80cf-43d1-9652-cf1f7e106b30"
 			}
 		},
 		"metadata": {
@@ -51,9 +51,9 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='parquet', header=True)"
+					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)"
 				],
-				"execution_count": 3
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
