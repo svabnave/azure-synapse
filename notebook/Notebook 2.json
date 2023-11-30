@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e6f5ff81-c121-4427-a2cc-0267e07a4abe"
+				"spark.autotune.trackingId": "1b70915a-5bde-45b8-b12d-83054f9c69a5"
 			}
 		},
 		"metadata": {
@@ -243,7 +243,7 @@
 					"df.write.format(\"parquet\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
 					""
 				],
-				"execution_count": 25
+				"execution_count": 26
 			},
 			{
 				"cell_type": "markdown",
