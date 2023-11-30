@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "305e3f9b-4aff-41ce-bdb6-5bb52d41e7b3"
+				"spark.autotune.trackingId": "d919f14a-66fb-49c3-b9ca-8e8e626071f5"
 			}
 		},
 		"metadata": {
@@ -240,6 +240,8 @@
 					}
 				},
 				"source": [
+					"df.write.format(\"csv\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
+					"\r\n",
 					""
 				],
 				"execution_count": null
