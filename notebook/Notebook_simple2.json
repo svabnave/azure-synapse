@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "81afcb54-ce0a-4e63-9318-1300f99ccfdc"
+				"spark.autotune.trackingId": "a235012c-6c5f-4a97-a420-dbd6fa0b2635"
 			}
 		},
 		"metadata": {
@@ -81,25 +81,26 @@
 					}
 				},
 				"source": [
-					"def my_aggregate(df, grouping_column, agg_operation):\r\n",
+					"def my_aggregate(df, grouping_column, agg_operation, agg_columns):\r\n",
 					"    # exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
 					"    # df = df.groupBy(\"Time\").agg(exprs)\r\n",
 					"\r\n",
-					"    arguments = [agg_operation(col(col_name)).alias('Total_'+col_name) for col_name in df.columns if col_name =='Price' or col_name =='KW_Consumption' ]\r\n",
+					"    arguments = [agg_operation(col(col_name)).alias('Total_'+col_name) for col_name in agg_columns]\r\n",
 					"    df = df.groupBy(grouping_column).agg(*arguments)\r\n",
 					"\r\n",
 					"    return df\r\n",
-					"    "
+					""
 				],
-				"execution_count": 88
+				"execution_count": 104
 			},
 			{
 				"cell_type": "code",
 				"source": [
 					"df_Yearly = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)\r\n",
-					"df_Monthly = df_Yearly"
+					"df_Monthly = df_Yearly\r\n",
+					"df = df_Yearly"
 				],
-				"execution_count": 100
+				"execution_count": 108
 			},
 			{
 				"cell_type": "code",
@@ -115,29 +116,11 @@
 					}
 				},
 				"source": [
-					"df_Yearly = my_aggregate(df_Yearly, 'Year', sum)\r\n",
+					"df_Yearly = my_aggregate(df_Yearly, 'Year', sum, ['Price','KW_Consumption'])\r\n",
+					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 97
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum)\r\n",
-					""
-				],
-				"execution_count": 101
+				"execution_count": 109
 			},
 			{
 				"cell_type": "code",
@@ -157,7 +140,26 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 102
+				"execution_count": 110
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\r\n",
+					"arguments = [sum(col(col_name)).alias('Total_'+col_name) for col_name in ['Price','KW_Consumption']]"
+				],
+				"execution_count": null
 			}
 		]
 	}
