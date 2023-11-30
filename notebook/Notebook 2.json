@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d919f14a-66fb-49c3-b9ca-8e8e626071f5"
+				"spark.autotune.trackingId": "e6f5ff81-c121-4427-a2cc-0267e07a4abe"
 			}
 		},
 		"metadata": {
@@ -64,14 +64,14 @@
 				"source": [
 					"from pyspark.sql.functions import year, month, col, to_date, when, last"
 				],
-				"execution_count": 201
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
 				"source": [
 					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231123_144912.csv', format='csv', header=True)"
 				],
-				"execution_count": 202
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -89,7 +89,7 @@
 				"source": [
 					"df = df.filter(df.Forbruk!= '')"
 				],
-				"execution_count": 203
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -111,7 +111,7 @@
 					"\r\n",
 					"df = df.drop('Forbruk','Pris')"
 				],
-				"execution_count": 204
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -133,7 +133,7 @@
 					"df = df.withColumn('Year',year('Date'))\r\n",
 					""
 				],
-				"execution_count": 205
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -164,7 +164,7 @@
 					".otherwise('')))))))))))))\r\n",
 					""
 				],
-				"execution_count": 206
+				"execution_count": 22
 			},
 			{
 				"cell_type": "markdown",
@@ -204,7 +204,7 @@
 					"df = df.groupBy(grouping_column).agg(*arguments)\r\n",
 					""
 				],
-				"execution_count": 208
+				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 					"display(df.limit(6))\r\n",
 					"print(df.count())"
 				],
-				"execution_count": 209
+				"execution_count": 24
 			},
 			{
 				"cell_type": "code",
@@ -240,11 +240,10 @@
 					}
 				},
 				"source": [
-					"df.write.format(\"csv\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
-					"\r\n",
+					"df.write.format(\"parquet\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 25
 			},
 			{
 				"cell_type": "markdown",
