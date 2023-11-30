@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a235012c-6c5f-4a97-a420-dbd6fa0b2635"
+				"spark.autotune.trackingId": "121f5b1d-9048-4c6c-965e-5af9ff75bb3a"
 			}
 		},
 		"metadata": {
@@ -85,7 +85,7 @@
 					"    # exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
 					"    # df = df.groupBy(\"Time\").agg(exprs)\r\n",
 					"\r\n",
-					"    arguments = [agg_operation(col(col_name)).alias('Total_'+col_name) for col_name in agg_columns]\r\n",
+					"    arguments = [agg_operation(col(col_name)).alias(col_name) for col_name in agg_columns]\r\n",
 					"    df = df.groupBy(grouping_column).agg(*arguments)\r\n",
 					"\r\n",
 					"    return df\r\n",
