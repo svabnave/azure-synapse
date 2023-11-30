@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c2771a18-80cf-43d1-9652-cf1f7e106b30"
+				"spark.autotune.trackingId": "2ab44619-e787-4db5-a106-1dc44eaef70b"
 			}
 		},
 		"metadata": {
@@ -53,7 +53,7 @@
 				"source": [
 					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)"
 				],
-				"execution_count": 6
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -73,7 +73,7 @@
 					"display(df.limit(6))\r\n",
 					"print(df.count())"
 				],
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -89,9 +89,9 @@
 					}
 				},
 				"source": [
-					"df.groupBy(\"Year\").sum(\"KW_Consumption\").show()  "
+					"df = df.groupBy(\"Year\").sum(\"KW_Consumption\").alias"
 				],
-				"execution_count": 4
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
