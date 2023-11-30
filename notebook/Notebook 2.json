@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "1b70915a-5bde-45b8-b12d-83054f9c69a5"
+				"spark.autotune.trackingId": "93583300-4d09-4a17-a480-cc2baa62187d"
 			}
 		},
 		"metadata": {
@@ -62,9 +62,10 @@
 					}
 				},
 				"source": [
-					"from pyspark.sql.functions import year, month, col, to_date, when, last"
+					"from pyspark.sql.functions import year, month, col, to_date, when, last\r\n",
+					"from delta.tables import DeltaTable"
 				],
-				"execution_count": 17
+				"execution_count": 31
 			},
 			{
 				"cell_type": "code",
@@ -240,10 +241,20 @@
 					}
 				},
 				"source": [
-					"df.write.format(\"parquet\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
+					"try:\r\n",
+					"    df.write.format(\"delta\").save(\"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
+					"except:\r\n",
+					"    delta_table = DeltaTable.forPath(spark, \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\")\r\n",
+					"\r\n",
+					"    delta_table.alias(\"target\").merge(\r\n",
+					"        df.alias(\"source\"),\r\n",
+					"        \"target.Time = source.Time\") \\\r\n",
+					"        .whenMatchedUpdateAll() \\\r\n",
+					"        .whenNotMatchedInsertAll() \\\r\n",
+					"        .execute()\r\n",
 					""
 				],
-				"execution_count": 26
+				"execution_count": 35
 			},
 			{
 				"cell_type": "markdown",
