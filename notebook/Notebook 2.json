@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f8cba587-b5e0-403e-8ee6-02c8d0457e1d"
+				"spark.autotune.trackingId": "4bc92164-c243-4c75-a86f-7d8778ec0a97"
 			}
 		},
 		"metadata": {
@@ -329,21 +329,23 @@
 					"sink_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\"\r\n",
 					"\r\n",
 					"try:\r\n",
-					"    print('Table does not exist. Creating new table...')\r\n",
 					"    df.write.format(\"delta\").save(sink_path)\r\n",
+					"    print('Table does not exist. Created new table.')\r\n",
 					"except:\r\n",
 					"    print('Table Found. Updating existing table...')\r\n",
 					"    delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
 					"\r\n",
-					"    delta_table.alias(\"target\").merge(\r\n",
+					"    result = delta_table.alias(\"target\").merge(\r\n",
 					"        df.alias(\"source\"),\r\n",
 					"        \"target.Time = source.Time\") \\\r\n",
 					"        .whenMatchedUpdateAll() \\\r\n",
 					"        .whenNotMatchedInsertAll() \\\r\n",
 					"        .execute()\r\n",
+					"    \r\n",
+					"    print(result)\r\n",
 					""
 				],
-				"execution_count": 40
+				"execution_count": 41
 			},
 			{
 				"cell_type": "markdown",
