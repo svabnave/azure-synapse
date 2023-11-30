@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2ab44619-e787-4db5-a106-1dc44eaef70b"
+				"spark.autotune.trackingId": "2a950d3d-40e3-4bcc-a482-ea17b9e7e786"
 			}
 		},
 		"metadata": {
@@ -50,10 +50,80 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
-					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)"
+					"from pyspark.sql.functions import year, month, col, to_date, when, last, sum\r\n",
+					"from delta.tables import DeltaTable"
 				],
-				"execution_count": 7
+				"execution_count": 71
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df_Yearly = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)\r\n",
+					"df_Monthly = df_Yearly"
+				],
+				"execution_count": 83
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+					"# df = df.groupBy(\"Time\").agg(exprs)\r\n",
+					"\r\n",
+					"columns = df_Yearly.columns\r\n",
+					"grouping_column = 'Year'\r\n",
+					"arguments = [sum(col(col_name)).alias('Total_'+col_name) for col_name in columns if col_name =='Price' or col_name =='KW_Consumption' ]\r\n",
+					"df_Yearly = df_Yearly.groupBy(grouping_column).agg(*arguments)\r\n",
+					""
+				],
+				"execution_count": 84
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+					"# df = df.groupBy(\"Time\").agg(exprs)\r\n",
+					"\r\n",
+					"columns = df_Monthly.columns\r\n",
+					"grouping_column = 'Month_Name'\r\n",
+					"arguments = [sum(col(col_name)).alias('Total_'+col_name) for col_name in columns if col_name =='Price' or col_name =='KW_Consumption' ]\r\n",
+					"df_Monthly = df_Monthly.groupBy(grouping_column).agg(*arguments)\r\n",
+					""
+				],
+				"execution_count": 85
 			},
 			{
 				"cell_type": "code",
@@ -70,10 +140,10 @@
 					"collapsed": false
 				},
 				"source": [
-					"display(df.limit(6))\r\n",
-					"print(df.count())"
+					"display(df_Yearly.limit(6))\r\n",
+					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 10
+				"execution_count": 86
 			},
 			{
 				"cell_type": "code",
@@ -89,9 +159,15 @@
 					}
 				},
 				"source": [
-					"df = df.groupBy(\"Year\").sum(\"KW_Consumption\").alias"
+					"# exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+					"# df = df.groupBy(\"Time\").agg(exprs)\r\n",
+					"\r\n",
+					"grouping_column = 'Year'\r\n",
+					"arguments = [sum(col(col_name)).alias('Total_'+col_name) for col_name in df.columns if col_name =='Price' or col_name =='KW_Consumption' ]\r\n",
+					"df = df.groupBy(grouping_column).agg(*arguments)\r\n",
+					""
 				],
-				"execution_count": 9
+				"execution_count": 69
 			},
 			{
 				"cell_type": "code",
@@ -107,10 +183,30 @@
 					}
 				},
 				"source": [
-					"df = df.withColumn('Total_KW_Consumption',df.sum(KW_Consumption))\r\n",
-					"df = df.withColumn('Total_Price',df.sum(Price)/100)"
+					"df = df1.groupBy(\"Year\").sum(\"KW_Consumption\").alias(\"Total_KW_Consumption\"),sum(\"Price\").alias(\"Total_Price\")"
 				],
-				"execution_count": null
+				"execution_count": 33
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df = df1.groupBy(\"Year\").sum(\"KW_Consumption\").alias(\"Total_KW_Consumption\")\r\n",
+					"df = df1.groupBy(\"Year\").sum(\"Price\").alias(\"Total_Price\")\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 28
 			},
 			{
 				"cell_type": "code",
