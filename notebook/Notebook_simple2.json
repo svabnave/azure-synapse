@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "83f63f75-c694-4750-9f27-40a7d5013310"
+				"spark.autotune.trackingId": "d752162b-c8a4-4101-bfab-708f92d05d11"
 			}
 		},
 		"metadata": {
@@ -98,7 +98,7 @@
 				"source": [
 					"df_Yearly = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)\r\n",
 					"df_Monthly = df_Yearly\r\n",
-					"df = df_Yearly"
+					""
 				],
 				"execution_count": 3
 			},
