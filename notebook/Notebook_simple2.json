@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e2b84326-2276-4fa1-b273-aaed628cae81"
+				"spark.autotune.trackingId": "83f63f75-c694-4750-9f27-40a7d5013310"
 			}
 		},
 		"metadata": {
@@ -65,7 +65,7 @@
 					"from pyspark.sql.functions import year, month, col, to_date, when, last, sum\r\n",
 					"from delta.tables import DeltaTable"
 				],
-				"execution_count": 87
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -91,7 +91,7 @@
 					"    return df\r\n",
 					""
 				],
-				"execution_count": 111
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -100,7 +100,7 @@
 					"df_Monthly = df_Yearly\r\n",
 					"df = df_Yearly"
 				],
-				"execution_count": 112
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -120,7 +120,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 113
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -140,7 +140,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 114
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -163,18 +163,18 @@
 					"    print('Table does not exist. Created new table.')\r\n",
 					"except:\r\n",
 					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+					"    delta_table = DeltaTable.forPath(spark, sink_path_Monthly_Bill)\r\n",
 					"\r\n",
 					"    result = delta_table.alias(\"target\").merge(\r\n",
 					"        df.alias(\"source\"),\r\n",
-					"        \"target.Time = source.Time\") \\\r\n",
+					"        \"target.Month_Name = source.Month_Name\") \\\r\n",
 					"        .whenMatchedUpdateAll() \\\r\n",
 					"        .whenNotMatchedInsertAll() \\\r\n",
 					"        .execute()\r\n",
 					"    \r\n",
 					"    print(result)"
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -197,18 +197,18 @@
 					"    print('Table does not exist. Created new table.')\r\n",
 					"except:\r\n",
 					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+					"    delta_table = DeltaTable.forPath(spark, sink_path_Yearly_Bill)\r\n",
 					"\r\n",
 					"    result = delta_table.alias(\"target\").merge(\r\n",
 					"        df.alias(\"source\"),\r\n",
-					"        \"target.Time = source.Time\") \\\r\n",
+					"        \"target.Year = source.Year\") \\\r\n",
 					"        .whenMatchedUpdateAll() \\\r\n",
 					"        .whenNotMatchedInsertAll() \\\r\n",
 					"        .execute()\r\n",
 					"    \r\n",
 					"    print(result)"
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
