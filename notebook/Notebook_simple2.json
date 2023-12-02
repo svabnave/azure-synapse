@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "bddf0e76-3a6a-422a-b008-e6478e71b143"
+				"spark.autotune.trackingId": "a9aebe43-1429-4e5f-91a9-95c27a868b5a"
 			}
 		},
 		"metadata": {
@@ -67,7 +67,7 @@
 					"from pathlib import Path\r\n",
 					""
 				],
-				"execution_count": 2
+				"execution_count": 28
 			},
 			{
 				"cell_type": "code",
@@ -93,7 +93,7 @@
 					"    return df\r\n",
 					""
 				],
-				"execution_count": 3
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -102,7 +102,7 @@
 					"df_Monthly = df_Yearly\r\n",
 					""
 				],
-				"execution_count": 4
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -122,7 +122,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 5
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -142,7 +142,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 9
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -240,32 +240,32 @@
 				},
 				"source": [
 					"def my_bill(df1,billpattern):\r\n",
-					"    when(billpattern=='Year')\r\n",
+					"    when(df1.billpattern==Year)\r\n",
 					"    sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
-					"    otherwise(when(billpattern=='Month_Name')\r\n",
+					"    otherwise(when(df1.billpattern==Month_Name))\r\n",
 					"    sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
 					"\r\n",
 					"    try:\r\n",
-					"    df1.write.format(\"delta\").save(sinkpath)\r\n",
-					"    print('Table does not exist. Created new table.')\r\n",
+					"      df1.write.format(\"delta\").save(sinkpath)\r\n",
+					"      print('Table does not exist. Created new table.')\r\n",
 					"    except:\r\n",
-					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, sinkpath)\r\n",
+					"      print('Table Found. Updating existing table...')\r\n",
+					"      delta_table = DeltaTable.forPath(spark, sinkpath)\r\n",
 					"\r\n",
-					"    result = delta_table.alias(\"target\").merge(\r\n",
-					"        df1.alias(\"source\"),\r\n",
-					"        \"target.billpattern = source.billpattern\") \\\r\n",
-					"        .whenMatchedUpdateAll() \\\r\n",
-					"        .whenNotMatchedInsertAll() \\\r\n",
-					"        .execute()\r\n",
+					"      result = delta_table.alias(\"target\").merge(\r\n",
+					"      df1.alias(\"source\"),\r\n",
+					"      \"target.billpattern = source.billpattern\") \\\r\n",
+					"      .whenMatchedUpdateAll() \\\r\n",
+					"      .whenNotMatchedInsertAll() \\\r\n",
+					"      .execute()\r\n",
 					"    \r\n",
-					"    print(result)\r\n",
+					"    return(result)\r\n",
 					"\r\n",
 					"    \r\n",
 					"\r\n",
 					"    "
 				],
-				"execution_count": 1
+				"execution_count": 31
 			},
 			{
 				"cell_type": "code",
@@ -281,10 +281,10 @@
 					}
 				},
 				"source": [
-					"df_Yearly = my_bill(df_Yearly, 'Year')\r\n",
-					"df_Monthly = my_bill(df_Monthly, 'Month_Name')"
+					"My_Yearly_bill = my_bill(df_Yearly, Year)\r\n",
+					"My_Monthly_bill = my_bill(df_Monthly, Month_Name)"
 				],
-				"execution_count": 27
+				"execution_count": 33
 			},
 			{
 				"cell_type": "code",
@@ -297,13 +297,14 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"display(df_Yearly.limit(6))\r\n",
-					"display(df_Monthly.limit(6))"
+					"display(My_Yearly_bill.limit(6))\r\n",
+					"display(My_Monthly_bill.limit(6))"
 				],
-				"execution_count": 45
+				"execution_count": 20
 			}
 		]
 	}
