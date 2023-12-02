@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "3aea9cc0-bc10-422e-bf22-a34b8360f523"
+				"spark.autotune.trackingId": "91acdb5f-fffa-4b98-9916-8bcf79798c46"
 			}
 		},
 		"metadata": {
@@ -63,9 +63,11 @@
 				},
 				"source": [
 					"from pyspark.sql.functions import year, month, col, to_date, when, last, sum\r\n",
-					"from delta.tables import DeltaTable"
+					"from delta.tables import DeltaTable\r\n",
+					"from pathlib import Path\r\n",
+					""
 				],
-				"execution_count": 11
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -91,7 +93,7 @@
 					"    return df\r\n",
 					""
 				],
-				"execution_count": 12
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -100,7 +102,7 @@
 					"df_Monthly = df_Yearly\r\n",
 					""
 				],
-				"execution_count": 13
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -120,7 +122,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 14
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -140,7 +142,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 15
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -237,15 +239,38 @@
 					}
 				},
 				"source": [
-					"def my_bill(Yearly_Bill,Year):\r\n",
-					"    Yearly_Bill = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
+					"def my_bill(Billtype):\r\n",
+					"\r\n",
+					"    if(Billtype=='Month_Name'):\r\n",
+					"\r\n",
+					"     sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
 					"\r\n",
 					"try:\r\n",
-					"    df_Yearly.write.format(\"delta\").save(Yearly_Bill)\r\n",
+					"    df_Monthly.write.format(\"delta\").save(sinkpath)\r\n",
 					"    print('Table does not exist. Created new table.')\r\n",
 					"except:\r\n",
 					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, Yearly_Bill)\r\n",
+					"    delta_table = DeltaTable.forPath(spark, sinkpath)\r\n",
+					"\r\n",
+					"    result = delta_table.alias(\"target\").merge(\r\n",
+					"        df_Monthly.alias(\"source\"),\r\n",
+					"        \"target.Month_Name = source.Month_Name\") \\\r\n",
+					"        .whenMatchedUpdateAll() \\\r\n",
+					"        .whenNotMatchedInsertAll() \\\r\n",
+					"        .execute()\r\n",
+					"    \r\n",
+					"    print(result)\r\n",
+					"\r\n",
+					"    else(Billtype=='Year'):\r\n",
+					"\r\n",
+					"     sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
+					"\r\n",
+					"try:\r\n",
+					"    df_Yearly.write.format(\"delta\").save(sinkpath)\r\n",
+					"    print('Table does not exist. Created new table.')\r\n",
+					"except:\r\n",
+					"    print('Table Found. Updating existing table...')\r\n",
+					"    delta_table = DeltaTable.forPath(spark, sinkpath)\r\n",
 					"\r\n",
 					"    result = delta_table.alias(\"target\").merge(\r\n",
 					"        df_Yearly.alias(\"source\"),\r\n",
@@ -253,12 +278,10 @@
 					"        .whenMatchedUpdateAll() \\\r\n",
 					"        .whenNotMatchedInsertAll() \\\r\n",
 					"        .execute()\r\n",
-					"        \r\n",
-					"\r\n",
-					"\r\n",
-					"return(result)"
+					"    \r\n",
+					"    print(result)"
 				],
-				"execution_count": 50
+				"execution_count": 24
 			},
 			{
 				"cell_type": "code",
@@ -274,10 +297,10 @@
 					}
 				},
 				"source": [
-					"mybillfun = my_bill(Yearly_Bill, 'Year')\r\n",
+					"mybillfun = my_bill('Month_Name')\r\n",
 					""
 				],
-				"execution_count": 43
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
