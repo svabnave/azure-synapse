@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a9aebe43-1429-4e5f-91a9-95c27a868b5a"
+				"spark.autotune.trackingId": "f67098cf-5927-4871-8b02-d53ee6e0e7a6"
 			}
 		},
 		"metadata": {
@@ -281,10 +281,10 @@
 					}
 				},
 				"source": [
-					"My_Yearly_bill = my_bill(df_Yearly, Year)\r\n",
-					"My_Monthly_bill = my_bill(df_Monthly, Month_Name)"
+					"My_Yearly_bill = my_bill(df_Yearly, 'Year')\r\n",
+					"My_Monthly_bill = my_bill(df_Monthly, 'Month_Name')"
 				],
-				"execution_count": 33
+				"execution_count": 34
 			},
 			{
 				"cell_type": "code",
