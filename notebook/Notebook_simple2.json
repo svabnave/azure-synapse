@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "26235169-ea7f-4ad6-8fab-078aa7c09b25"
+				"spark.autotune.trackingId": "d9f4f9ff-cd63-4c59-a70f-214b8a8c78e0"
 			}
 		},
 		"metadata": {
@@ -211,6 +211,40 @@
 					"    print(result)"
 				],
 				"execution_count": 28
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def upsert_delta_table(sink_path, df, key_column):\r\n",
+					"    try:\r\n",
+					"        df.write.format(\"delta\").save(sink_path)\r\n",
+					"        print('Table does not exist. Created new table.')\r\n",
+					"    except:\r\n",
+					"        print('Table Found. Updating existing table...')\r\n",
+					"        delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+					"\r\n",
+					"        result = delta_table.alias(\"target\").merge(\r\n",
+					"            df.alias(\"source\"),\r\n",
+					"            \"target.\"+key_column+\" = source.\"+key_column) \\\r\n",
+					"            .whenMatchedUpdateAll() \\\r\n",
+					"            .whenNotMatchedInsertAll() \\\r\n",
+					"            .execute()\r\n",
+					"        \r\n",
+					"        print(result)\r\n",
+					""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
