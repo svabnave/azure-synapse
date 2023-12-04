@@ -15,18 +15,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Silver_DF",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"WorkCenterMDX": {
-								"Directoryname": "WorkCenter_MDX/Processed"
-							},
-							"LocationMDXSource": {
-								"Directoryname": "Location_MDX/Processed"
-							}
-						}
-					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
