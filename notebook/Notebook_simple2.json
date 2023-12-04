@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "68b5b590-97bf-49a0-a4e9-0155d8cc26bc"
+				"spark.autotune.trackingId": "145bb41d-0d73-494d-bccd-c105c9434055"
 			}
 		},
 		"metadata": {
@@ -85,7 +85,7 @@
 				"source": [
 					"%run \"Function_Library\""
 				],
-				"execution_count": 22
+				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -114,7 +114,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 19
+				"execution_count": 24
 			},
 			{
 				"cell_type": "code",
@@ -134,7 +134,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 9
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -153,7 +153,7 @@
 					"year_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
 					"result = upsert_delta_table(year_path, df_Yearly, \"Year\")"
 				],
-				"execution_count": 20
+				"execution_count": 26
 			},
 			{
 				"cell_type": "code",
@@ -173,7 +173,7 @@
 					"result = upsert_delta_table(month_path, df_Monthly, 'Month_Name')\r\n",
 					""
 				],
-				"execution_count": 14
+				"execution_count": 27
 			},
 			{
 				"cell_type": "code",
