@@ -1,0 +1,17 @@
+{
+	"name": "CREATE TABLE Yearly_Bill",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE [dbo].[Yearly_Bill]\nCREATE EXTERNAL TABLE [dbo].[Yearly_Bill]\n(\n\t [Year] INT,\n\t [Total_KW_Consumption] FLOAT,\n\t [Total_Price] FLOAT\n)\nWITH\n(\n\tLOCATION = 'Agva/Yearly_bill',\n\tDATA_SOURCE = [staging],\n\tFILE_FORMAT = [DeltaLakeFormat]\n)\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Agva_Electricity",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

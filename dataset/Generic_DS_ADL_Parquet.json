@@ -1,0 +1,29 @@
+{
+	"name": "Generic_DS_ADL_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysyntest",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Directoryname": {
+				"type": "string",
+				"defaultValue": "AgvaData"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().Directoryname",
+					"type": "Expression"
+				},
+				"fileSystem": "staging"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

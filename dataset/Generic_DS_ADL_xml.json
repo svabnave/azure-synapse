@@ -1,0 +1,33 @@
+{
+	"name": "Generic_DS_ADL_xml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADL_mysyntest",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Directoryname": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().Filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().Directoryname",
+					"type": "Expression"
+				},
+				"fileSystem": "staging"
+			}
+		}
+	}
+}

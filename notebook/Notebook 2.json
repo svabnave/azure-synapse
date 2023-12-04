@@ -1,0 +1,365 @@
+{
+	"name": "Notebook 2",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "mysparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "416a16af-bd1e-4d3d-8c4d-0bba862bad09"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/b2a378a1-12f1-45ef-b390-81e13240a72f/resourceGroups/myrgp_2023/providers/Microsoft.Synapse/workspaces/my-syn-test/bigDataPools/mysparkpool",
+				"name": "mysparkpool",
+				"type": "Spark",
+				"endpoint": "https://my-syn-test.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 10,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Import Libraries"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import year, month, col, to_date, when, last\r\n",
+					"from delta.tables import DeltaTable"
+				],
+				"execution_count": 50
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Read data from source file"
+				]
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231123_144912.csv', format='csv', header=True)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Filter out data having NULL consumption"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df = df.filter(df.Forbruk!= '')"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Rename existing columns and Derive Price, Month, Year and Date columns"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df = df.withColumn('KW_Consumption',df.Forbruk)\r\n",
+					"df = df.withColumn('Price_per_kw',df.Pris)\r\n",
+					"df = df.withColumn('Price',df.Forbruk * df.Pris)\r\n",
+					"df = df.withColumn('Date',to_date(df.Time[0:10], 'dd.MM.yyyy'))\r\n",
+					"df = df.withColumn('Month',month('Date'))\r\n",
+					"df = df.withColumn('Year',year('Date'))\r\n",
+					"\r\n",
+					"df = df.drop('Forbruk','Pris')"
+				],
+				"execution_count": 20
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Derive Month_Name Column"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df = df.withColumn('Month_Name', when(df.Month ==1, 'Jan')\r\n",
+					".otherwise(when(df.Month ==2, 'Feb')\r\n",
+					".otherwise(when(df.Month ==3, 'Mar')\r\n",
+					".otherwise(when(df.Month ==4, 'Apr')\r\n",
+					".otherwise(when(df.Month ==5, 'May')\r\n",
+					".otherwise(when(df.Month ==6, 'Jun')\r\n",
+					".otherwise(when(df.Month ==7, 'Jul')\r\n",
+					".otherwise(when(df.Month ==8, 'Aug')\r\n",
+					".otherwise(when(df.Month ==9, 'Sep')\r\n",
+					".otherwise(when(df.Month ==10, 'Oct')\r\n",
+					".otherwise(when(df.Month ==11, 'Nov')\r\n",
+					".otherwise(when(df.Month ==12, 'Dec')\r\n",
+					".otherwise('')))))))))))))\r\n",
+					""
+				],
+				"execution_count": 22
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"month_list = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']\r\n",
+					"month = 8\r\n",
+					"print(month_list[month-1])\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Remove duplicates for Time column"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+					"# df = df.groupBy(\"Time\").agg(exprs)\r\n",
+					"\r\n",
+					"grouping_column = 'Time'\r\n",
+					"arguments = [last(col(col_name)).alias(col_name) for col_name in df.columns if col_name != grouping_column]\r\n",
+					"df = df.groupBy(grouping_column).agg(*arguments)\r\n",
+					""
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Display Sample data and count of unique rows"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df.limit(6))\r\n",
+					"print(df.count())"
+				],
+				"execution_count": 38
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Upsert Data into given path"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"sink_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\"\r\n",
+					"\r\n",
+					"try:\r\n",
+					"    df.write.format(\"delta\").save(sink_path)\r\n",
+					"    print('Table does not exist. Created new table.')\r\n",
+					"except:\r\n",
+					"    print('Table Found. Updating existing table...')\r\n",
+					"    delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+					"\r\n",
+					"    result = delta_table.alias(\"target\").merge(\r\n",
+					"        df.alias(\"source\"),\r\n",
+					"        \"target.Time = source.Time\") \\\r\n",
+					"        .whenMatchedUpdateAll() \\\r\n",
+					"        .whenNotMatchedInsertAll() \\\r\n",
+					"        .execute()\r\n",
+					"    \r\n",
+					"    print(result)\r\n",
+					""
+				],
+				"execution_count": 42
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				]
+			}
+		]
+	}
+}

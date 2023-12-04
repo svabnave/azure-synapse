@@ -1,0 +1,126 @@
+{
+	"name": "DF_lightbill_Monthly",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Excel1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "ALLDates"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "LS_ADL_mysyntest",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "exists1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "MonthName"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "AlterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Time as string,",
+				"          Forbruk as double,",
+				"          Pris as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
+				"source(output(",
+				"          Time as string,",
+				"          Month_Name as string,",
+				"          Date as date,",
+				"          Month as integer,",
+				"          KW_Consumption as double,",
+				"          Price_per_kw as double,",
+				"          Price as double,",
+				"          Year as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/All_Dates') ~> ALLDates",
+				"source1, ALLDates exists(source1@Time == ALLDates@Time,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> exists1",
+				"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+				"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+				"          KW_Consumption = Forbruk,",
+				"          Price_per_KW = Pris,",
+				"          Price = Forbruk*Pris,",
+				"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+				"derivedColumn1 derive(MonthName = iif(Month == 1, 'JAN',iif(Month == 2, 'FEB',iif(Month == 3, 'MAR',iif(Month == 4, 'APR',iif(Month == 5, 'MAY',iif(Month == 6, 'JUN',iif(Month == 7, 'JUL',iif(Month == 10, 'OCT',iif(Month == 12, 'DEC',iif(Month == 9, 'SEP',iif(Month == 11, 'NOV',iif(Month == 8, 'AUG',''))))))))))))+'-'+toString(Year)) ~> MonthName",
+				"MonthName select(mapColumn(",
+				"          Time,",
+				"          MonthName,",
+				"          Month,",
+				"          Date,",
+				"          KW_Consumption,",
+				"          Price_per_KW,",
+				"          Price,",
+				"          Year",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(MonthName),",
+				"     KW_Consumption = sum(KW_Consumption),",
+				"          Price = sum(Price)/100) ~> aggregate1",
+				"aggregate1 alterRow(upsertIf(true())) ~> AlterRow1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'staging',",
+				"     folderPath: 'Agva/Monthaggregate',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['MonthName'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

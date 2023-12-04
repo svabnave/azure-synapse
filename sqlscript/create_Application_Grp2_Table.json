@@ -1,0 +1,17 @@
+{
+	"name": "create_Application_Grp2_Table",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE DBO.ApplicationGroup2\nCREATE EXTERNAL TABLE ApplicationGroup2 (\n     AddedOn VARCHAR(MAX), \n     Sour1From VARCHAR(MAX), \n     Sour1To VARCHAR(MAX),\n     Target1 VARCHAR(MAX),\n     ValidFrom VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'ApplicationGroup2_KEDE/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mysqldb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

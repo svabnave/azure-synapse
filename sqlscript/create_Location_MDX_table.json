@@ -1,0 +1,17 @@
+{
+	"name": "create_Location_MDX_table",
+	"properties": {
+		"content": {
+			"query": "DROP EXTERNAL TABLE mySchema.Location_MDX\nCREATE EXTERNAL TABLE Location_MDX (\n     Ktext VARCHAR(MAX), \n     Stand VARCHAR(MAX), \n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Location_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mysqldb",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
