@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "fbc9dd39-02a9-45a3-a41e-6fe79cb4c43b"
+				"spark.autotune.trackingId": "bc93284c-e0cb-441b-ae82-f98c605f0b9b"
 			}
 		},
 		"metadata": {
@@ -67,7 +67,7 @@
 					"from pathlib import Path\r\n",
 					""
 				],
-				"execution_count": 1
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -93,7 +93,40 @@
 					"    return df\r\n",
 					""
 				],
-				"execution_count": 7
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def upsert_delta_table(sink_path, df, key_column):\r\n",
+					"    try:\r\n",
+					"        result = df.write.format(\"delta\").save(sink_path)\r\n",
+					"        print('Table does not exist. Created new table.')\r\n",
+					"    except:\r\n",
+					"        print('Table Found. Updating existing table...')\r\n",
+					"        delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+					"\r\n",
+					"        result = delta_table.alias(\"target\").merge(\r\n",
+					"            df.alias(\"source\"),\r\n",
+					"            \"target.\"+key_column+\" = source.\"+key_column) \\\r\n",
+					"            .whenMatchedUpdateAll() \\\r\n",
+					"            .whenNotMatchedInsertAll() \\\r\n",
+					"            .execute()\r\n",
+					"    return result\r\n",
+					"        "
+				],
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -102,7 +135,7 @@
 					"df_Monthly = df_Yearly\r\n",
 					""
 				],
-				"execution_count": 8
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -122,7 +155,7 @@
 					"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
 					""
 				],
-				"execution_count": 9
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -142,41 +175,7 @@
 					"display(df_Yearly.limit(6))\r\n",
 					"display(df_Monthly.limit(6))"
 				],
-				"execution_count": 10
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"Yearly_Bill = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
-					"\r\n",
-					"try:\r\n",
-					"    df_Yearly.write.format(\"delta\").save(Yearly_Bill)\r\n",
-					"    print('Table does not exist. Created new table.')\r\n",
-					"except:\r\n",
-					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, Yearly_Bill)\r\n",
-					"\r\n",
-					"    result = delta_table.alias(\"target\").merge(\r\n",
-					"        df_Yearly.alias(\"source\"),\r\n",
-					"        \"target.Year = source.Year\") \\\r\n",
-					"        .whenMatchedUpdateAll() \\\r\n",
-					"        .whenNotMatchedInsertAll() \\\r\n",
-					"        .execute()\r\n",
-					"    \r\n",
-					"    print(result)"
-				],
-				"execution_count": 27
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -195,41 +194,7 @@
 					"year_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
 					"result = upsert_delta_table(year_path, df_Yearly, \"Year\")"
 				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"Monthly_Bill = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
-					"\r\n",
-					"try:\r\n",
-					"    df_Monthly.write.format(\"delta\").save(Monthly_Bill)\r\n",
-					"    print('Table does not exist. Created new table.')\r\n",
-					"except:\r\n",
-					"    print('Table Found. Updating existing table...')\r\n",
-					"    delta_table = DeltaTable.forPath(spark, Monthly_Bill)\r\n",
-					"\r\n",
-					"    result = delta_table.alias(\"target\").merge(\r\n",
-					"        df_Monthly.alias(\"source\"),\r\n",
-					"        \"target.Month_Name = source.Month_Name\") \\\r\n",
-					"        .whenMatchedUpdateAll() \\\r\n",
-					"        .whenNotMatchedInsertAll() \\\r\n",
-					"        .execute()\r\n",
-					"    \r\n",
-					"    return result"
-				],
-				"execution_count": 28
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -246,43 +211,9 @@
 				},
 				"source": [
 					"month_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
-					"result = upsert_delta_table(month_path, df_Monthly, Month_Name)"
+					"result = upsert_delta_table(month_path, df_Monthly, 'Month_Name')"
 				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"def upsert_delta_table(sink_path, df, key_column):\r\n",
-					"    try:\r\n",
-					"        df.write.format(\"delta\").save(sink_path)\r\n",
-					"        print('Table does not exist. Created new table.')\r\n",
-					"    except:\r\n",
-					"        print('Table Found. Updating existing table...')\r\n",
-					"        delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
-					"\r\n",
-					"        result = delta_table.alias(\"target\").merge(\r\n",
-					"            df.alias(\"source\"),\r\n",
-					"            \"target.\"+key_column+\" = source.\"+key_column+\")\" \\\r\n",
-					"            .whenMatchedUpdateAll() \\\r\n",
-					"            .whenNotMatchedInsertAll() \\\r\n",
-					"            .execute()\r\n",
-					"        \r\n",
-					"        print(result)\r\n",
-					""
-				],
-				"execution_count": null
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -326,7 +257,7 @@
 					"\r\n",
 					"      result = delta_table.alias(\"target\").merge(\r\n",
 					"      df1.alias(\"source\"),\r\n",
-					"      \"target.\"+billpattern+\" = source.\"+billpattern+\")\" \\\r\n",
+					"      \"target.\"+billpattern+\" = source.\"+billpattern) \\\r\n",
 					"      .whenMatchedUpdateAll() \\\r\n",
 					"      .whenNotMatchedInsertAll() \\\r\n",
 					"      .execute()\r\n",
