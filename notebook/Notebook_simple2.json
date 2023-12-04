@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d9f4f9ff-cd63-4c59-a70f-214b8a8c78e0"
+				"spark.autotune.trackingId": "27284cc9-58fd-4edb-b834-3829e08df46f"
 			}
 		},
 		"metadata": {
@@ -192,6 +192,25 @@
 					}
 				},
 				"source": [
+					"year_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
+					"result = upsert_delta_table(year_path, df_Yearly, \"Year\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
 					"Monthly_Bill = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
 					"\r\n",
 					"try:\r\n",
@@ -208,9 +227,28 @@
 					"        .whenNotMatchedInsertAll() \\\r\n",
 					"        .execute()\r\n",
 					"    \r\n",
-					"    print(result)"
+					"    return result"
 				],
 				"execution_count": 28
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"month_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
+					"result = upsert_delta_table(month_path, df_Monthly, Month_Name)"
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
