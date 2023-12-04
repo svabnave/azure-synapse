@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "my-syn-test"
+		},
+		"my-syn-test-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:my-syn-test.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"LS_ADL_OData_properties_typeProperties_url": {
+			"value": "https://mystorage07102022.dfs.core.windows.net/"
+		},
+		"LS_ADL_mysyntest_properties_typeProperties_url": {
+			"value": "https://mysynstorage.dfs.core.windows.net/"
+		},
+		"my-syn-test-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://mysynstorage.dfs.core.windows.net"
+		}
+	}
+}

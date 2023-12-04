@@ -1,0 +1,4254 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "my-syn-test"
+		},
+		"my-syn-test-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'my-syn-test-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:my-syn-test.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"LS_ADL_OData_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mystorage07102022.dfs.core.windows.net/"
+		},
+		"LS_ADL_mysyntest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mysynstorage.dfs.core.windows.net/"
+		},
+		"my-syn-test-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://mysynstorage.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/Calculate_lightbill_Monthname')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow_Monthname",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Dataflow_lightbill_monthname",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Filename": "hourvalues_20231123_144912.xlsx"
+									},
+									"AllDateSource": {},
+									"MonthlySource": {},
+									"YearlySource": {},
+									"Monthly": {},
+									"Yearly": {},
+									"AllDates": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/Dataflow_lightbill_monthname')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Calculate_lightbill_Monthname_Simple1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow_Monthname",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Dataflow_lightbill_monthname_Simple1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Filename": "hourvalues_20231128_133833.xlsx"
+									},
+									"AllDateSource": {},
+									"AllDates": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Dataflow_lightbill_monthname_Simple2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Data flow_Monthname",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Dataflow_lightbill_monthname_Simple2",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"AllDateSource": {},
+									"Monthly": {},
+									"Yearly": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/Dataflow_lightbill_monthname_Simple1')]",
+				"[concat(variables('workspaceId'), '/dataflows/Dataflow_lightbill_monthname_Simple2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Calculate_lightbill_monthly')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "DF_lightbillMonthly",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_lightbill_Monthly",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Filename": "hourvalues_20231123_144912.xlsx"
+									},
+									"ALLDates": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"startdate": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/DF_lightbill_Monthly')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customer _ingestion')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.tablenames",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy Customer data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ExcelSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "Generic_XL_ADL",
+											"type": "DatasetReference",
+											"parameters": {
+												"File_Name": "Customers.xlsx",
+												"Sheet_Name": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Generic_DS_ADL_Parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directoryname": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"tablenames": {
+						"type": "array",
+						"defaultValue": [
+							"Contacts",
+							"Orders"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_XL_ADL')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customer_Data_Ingest')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.Table_names",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ExcelSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "Generic_XL_ADL",
+											"type": "DatasetReference",
+											"parameters": {
+												"File_Name": "Customers.xlsx",
+												"Sheet_Name": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Generic_DS_ADL_Parquet",
+											"type": "DatasetReference",
+											"parameters": {
+												"Directoryname": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Table_names": {
+						"type": "array",
+						"defaultValue": [
+							"Contacts",
+							"Orders"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_XL_ADL')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customer_gold_receipt')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Customer_receipt",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Contacts": {
+										"Directoryname": "Contacts"
+									},
+									"Orders": {
+										"Directoryname": "Orders"
+									},
+									"sink1": {
+										"Directoryname": "Receipts"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/Customer_receipt')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customr_Gold')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Customer_Gold",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Customer_Gold",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Orders": {
+										"Directoryname": "Orders"
+									},
+									"Contacts": {
+										"Directoryname": "Contacts"
+									},
+									"DhandaSink": {
+										"Directoryname": "Business"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/Customer_Gold')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_pipeline_copy')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data from http to staging",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set FileName",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Generic_DS_ADL_Binary",
+								"type": "DatasetReference",
+								"parameters": {
+									"Filename": {
+										"value": "@concat(pipeline().parameters.tablename,'.xml')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Generic_DS_ADL_destination",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directoryname": {
+										"value": "@pipeline().parameters.tablename",
+										"type": "Expression"
+									},
+									"Filename": {
+										"value": "@variables('FileName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Set FileName",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "FileName",
+							"value": {
+								"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy data from http to staging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Generic_Flatten",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Directoryname": {
+											"value": "@pipeline().parameters.tablename",
+											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@variables('FileName')",
+											"type": "Expression"
+										}
+									},
+									"sink1": {
+										"Directoryname": {
+											"value": "@concat(pipeline().parameters.tablename,'/Processed')",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"tablename": {
+						"type": "string",
+						"defaultValue": "MaterialStorageLocation_MDX"
+					}
+				},
+				"variables": {
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Binary')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_destination')]",
+				"[concat(variables('workspaceId'), '/dataflows/Generic_Flatten')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/MetaData_Pipeline')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set Filename",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Filename",
+							"value": {
+								"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Copy data from http to staging",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set Filename",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Generic_DS_ADL_Binary",
+								"type": "DatasetReference",
+								"parameters": {
+									"Filename": {
+										"value": "@concat(pipeline().parameters.tablename,'.xml')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Generic_DS_ADL_destination",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directoryname": {
+										"value": "@pipeline().parameters.tablename",
+										"type": "Expression"
+									},
+									"Filename": {
+										"value": "@variables('FileName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy data from http to staging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DF_Metadata",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Directoryname": {
+											"value": "@pipeline().parameters.tablename",
+											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@variables('Filename')",
+											"type": "Expression"
+										}
+									},
+									"Metadata": {
+										"Directoryname": {
+											"value": "@concat(pipeline().parameters.tablename,'/Processed')",
+											"type": "Expression"
+										}
+									},
+									"KeyCols": {
+										"Directoryname": {
+											"value": "@concat(pipeline().parameters.tablename,'/Key_Cols')",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"tablename": {
+						"type": "string",
+						"defaultValue": "Metadata"
+					}
+				},
+				"variables": {
+					"Filename": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Binary')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_destination')]",
+				"[concat(variables('workspaceId'), '/dataflows/DF_Metadata')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/revision_pipeline')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Generic_DS_ADL_Binary",
+								"type": "DatasetReference",
+								"parameters": {
+									"Filename": {
+										"value": "@concat(pipeline().parameters.tablename,'.xml')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Generic_DS_ADL_destination",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directoryname": {
+										"value": "@pipeline().parameters.tablename",
+										"type": "Expression"
+									},
+									"Filename": {
+										"value": "@variables('Filename')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Filename",
+							"value": {
+								"value": "@concat(pipeline().parameters.tablename,'_',convertFromUtc(utcnow(),'W. Europe standard Time'),'.xml')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "revision_Dataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {
+										"Directoryname": "Incoterm_MDX",
+										"Filename": "Incoterm_MDX_2023-11-01T12:32:53.9016806.xml"
+									},
+									"sink1": {
+										"Directoryname": "Incoterm_MDX/Processed"
+									}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"tablename": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"Filename": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Binary')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_destination')]",
+				"[concat(variables('workspaceId'), '/dataflows/revision_Dataflow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Excel1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_mysyntest",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Content",
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": "Agva",
+						"fileSystem": "staging"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_DS_ADL_Binary')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_OData",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": "Source_Files",
+						"fileSystem": "http"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_OData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_DS_ADL_Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_mysyntest",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directoryname": {
+						"type": "string",
+						"defaultValue": "AgvaData"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().Directoryname",
+							"type": "Expression"
+						},
+						"fileSystem": "staging"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_DS_ADL_destination')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_mysyntest",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directoryname": {
+						"type": "string"
+					},
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().Directoryname",
+							"type": "Expression"
+						},
+						"fileSystem": "staging"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_DS_ADL_xml')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_mysyntest",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directoryname": {
+						"type": "string"
+					},
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Xml",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().Directoryname",
+							"type": "Expression"
+						},
+						"fileSystem": "staging"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_XL_ADL')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADL_OData",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"File_Name": {
+						"type": "string"
+					},
+					"Sheet_Name": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": {
+						"value": "@dataset().Sheet_Name",
+						"type": "Expression"
+					},
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().File_Name",
+							"type": "Expression"
+						},
+						"folderPath": "Source_Files",
+						"fileSystem": "http"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_OData')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_ADL_OData')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_ADL_OData_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LS_ADL_mysyntest')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_ADL_mysyntest_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/my-syn-test-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('my-syn-test-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/my-syn-test-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('my-syn-test-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customer_Gold')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "Orders"
+						},
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "Contacts"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "DhandaSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "Dhanda"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Order_ID as string,",
+						"          Order_Date as string,",
+						"          email as string,",
+						"          Product as string,",
+						"          Colour as string,",
+						"          Unit_Cost as string,",
+						"          Quantity as string,",
+						"          Total_Price as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> Orders",
+						"source(output(",
+						"          First_name as string,",
+						"          Last_name as string,",
+						"          email as string,",
+						"          phone as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> Contacts",
+						"Orders, Contacts join(Orders@email == Contacts@email,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 aggregate(groupBy(Orders@email),",
+						"     First_name = first(First_name),",
+						"          Last_name = last(Last_name),",
+						"          Total_Business = sum(toFloat(Total_Price))) ~> Dhanda",
+						"Dhanda sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> DhandaSink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Customer_receipt')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "Contacts"
+						},
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "Orders"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          First_name as string,",
+						"          Last_name as string,",
+						"          email as string,",
+						"          phone as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> Contacts",
+						"source(output(",
+						"          Order_ID as string,",
+						"          Order_Date as string,",
+						"          email as string,",
+						"          Product as string,",
+						"          Colour as string,",
+						"          Unit_Cost as string,",
+						"          Quantity as string,",
+						"          Total_Price as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> Orders",
+						"Contacts, Orders join(Contacts@email == Orders@email,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 aggregate(groupBy(Order_ID),",
+						"     Total_Price = sum(toFloat(Total_Price)),",
+						"          First_name = first(First_name),",
+						"          Last_name = last(Last_name),",
+						"          Order_Date = first(Order_Date),",
+						"          email = first(Orders@email),",
+						"          phone = first(phone),",
+						"          Product = first(Product),",
+						"          Colour = first(Colour),",
+						"          Unit_Cost = first(Unit_Cost),",
+						"          Quantity = first(Quantity)) ~> aggregate1",
+						"aggregate1 select(mapColumn(",
+						"          Order_ID,",
+						"          Order_Date,",
+						"          First_name,",
+						"          Last_name,",
+						"          Total_Price,",
+						"          email,",
+						"          phone,",
+						"          Product,",
+						"          Colour,",
+						"          Unit_Cost,",
+						"          Quantity",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DF_Metadata')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_xml",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "Metadata"
+						},
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "KeyCols"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flattenMetadata"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "flattenKelyCols"
+						},
+						{
+							"name": "lookup1"
+						},
+						{
+							"name": "select2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx} as ({@Version} as double, {http://schemas.microsoft.com/ado/2007/06/edmx,DataServices} as ({http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,@DataServiceVersion} as double, {http://schemas.microsoft.com/ado/2008/09/edm,Schema} as ({@Namespace} as string, {http://schemas.microsoft.com/ado/2008/09/edm,EntityContainer} as ({@Name} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,@IsDefaultEntityContainer} as boolean, {http://schemas.microsoft.com/ado/2008/09/edm,EntitySet} as ({@EntityType} as string, {@Name} as string, {http://www.sap.com/Protocols/SAPData,@addressable} as boolean, {http://www.sap.com/Protocols/SAPData,@content-version} as boolean, {http://www.sap.com/Protocols/SAPData,@creatable} as boolean, {http://www.sap.com/Protocols/SAPData,@deletable} as boolean, {http://www.sap.com/Protocols/SAPData,@pageable} as boolean, {http://www.sap.com/Protocols/SAPData,@requires-filter} as boolean, {http://www.sap.com/Protocols/SAPData,@updatable} as boolean)[], {http://www.sap.com/Protocols/SAPData,@supported-formats} as string), {http://schemas.microsoft.com/ado/2008/09/edm,EntityType} as ({@Name} as string, {http://schemas.microsoft.com/ado/2008/09/edm,Key} as ({http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef} as ({@Name} as string)[]), {http://schemas.microsoft.com/ado/2008/09/edm,Property} as ({@MaxLength} as short, {@Name} as string, {@Nullable} as boolean, {@Precision} as short, {@Scale} as short, {@Type} as string, {http://www.sap.com/Protocols/SAPData,@creatable} as boolean, {http://www.sap.com/Protocols/SAPData,@filterable} as boolean, {http://www.sap.com/Protocols/SAPData,@label} as string, {http://www.sap.com/Protocols/SAPData,@semantics} as string, {http://www.sap.com/Protocols/SAPData,@sortable} as boolean, {http://www.sap.com/Protocols/SAPData,@unicode} as boolean, {http://www.sap.com/Protocols/SAPData,@unit} as string, {http://www.sap.com/Protocols/SAPData,@updatable} as boolean)[], {http://www.sap.com/Protocols/SAPData,@content-version} as boolean)[], {http://www.sap.com/Protocols/SAPData,@schema-version} as boolean, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string)[])))",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     validationMode: 'none',",
+						"     namespaces: true) ~> source1",
+						"source1 foldDown(unroll({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property}),",
+						"     mapColumn(",
+						"          Table_Name = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{@Name},",
+						"          Key_Columns = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef}.{@Name},",
+						"          each({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Property},match(true()),",
+						"               replace(replace($$,'http://www.sap.com/Protocols/SAPData,@',''),'@','') = $$)",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flattenMetadata",
+						"derivedColumn1 select(mapColumn(",
+						"          Table_Name,",
+						"          MaxLength,",
+						"          Column_Name = Name,",
+						"          Data_Type = Type,",
+						"          English_Name = label,",
+						"          Key_Columns",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"flattenMetadata derive(Key_Columns = toString(Key_Columns)) ~> derivedColumn1",
+						"source1 foldDown(unroll({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef}),",
+						"     mapColumn(",
+						"          Table_Name = {http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{@Name},",
+						"          each({http://schemas.microsoft.com/ado/2007/06/edmx,Edmx}.{http://schemas.microsoft.com/ado/2007/06/edmx,DataServices}.{http://schemas.microsoft.com/ado/2008/09/edm,Schema}.{http://schemas.microsoft.com/ado/2008/09/edm,EntityType}.{http://schemas.microsoft.com/ado/2008/09/edm,Key}.{http://schemas.microsoft.com/ado/2008/09/edm,PropertyRef},match(true()),",
+						"               replace($$,'@','') = $$)",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flattenKelyCols",
+						"flattenKelyCols, select1 lookup(Name == Column_Name,",
+						"     multiple: false,",
+						"     pickup: 'first',",
+						"     asc(Column_Name, true),",
+						"     broadcast: 'auto')~> lookup1",
+						"lookup1 select(mapColumn(",
+						"          Table_Name = flattenKelyCols@Table_Name,",
+						"          Name,",
+						"          English_Name",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Metadata",
+						"select2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> KeyCols"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_xml')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DF_lightbill_Monthly')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "ALLDates"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "MonthName"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> ALLDates",
+						"source1, ALLDates exists(source1@Time == ALLDates@Time,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+						"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+						"          KW_Consumption = Forbruk,",
+						"          Price_per_KW = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+						"derivedColumn1 derive(MonthName = iif(Month == 1, 'JAN',iif(Month == 2, 'FEB',iif(Month == 3, 'MAR',iif(Month == 4, 'APR',iif(Month == 5, 'MAY',iif(Month == 6, 'JUN',iif(Month == 7, 'JUL',iif(Month == 10, 'OCT',iif(Month == 12, 'DEC',iif(Month == 9, 'SEP',iif(Month == 11, 'NOV',iif(Month == 8, 'AUG',''))))))))))))+'-'+toString(Year)) ~> MonthName",
+						"MonthName select(mapColumn(",
+						"          Time,",
+						"          MonthName,",
+						"          Month,",
+						"          Date,",
+						"          KW_Consumption,",
+						"          Price_per_KW,",
+						"          Price,",
+						"          Year",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(MonthName),",
+						"     KW_Consumption = sum(KW_Consumption),",
+						"          Price = sum(Price)/100) ~> aggregate1",
+						"aggregate1 alterRow(upsertIf(true())) ~> AlterRow1",
+						"AlterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthaggregate',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['MonthName'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow1')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as timestamp 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\'',",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     timestampFormats: ['yyyy-MM-dd\\'T\\'HH:mm:ss\\'Z\\'']) ~> source1",
+						"source1 derive(KWt_Consumption = Forbruk,",
+						"          Price_Per_Kwt = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Month = month(Time)) ~> derivedColumn1",
+						"derivedColumn1 select(mapColumn(",
+						"          Month,",
+						"          Time,",
+						"          KWt_Consumption,",
+						"          Price_Per_Kwt,",
+						"          Price",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(Month),",
+						"     Total_KWt_Consumption = sum(KWt_Consumption),",
+						"          Total_Price_in_NOK = sum(Price)/100) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill',",
+						"     overwrite: true,",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: true,",
+						"     updateable: false,",
+						"     upsertable: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow_lightbill_monthname')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDateSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "MonthlySource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "YearlySource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Monthly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Yearly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDates"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "alterRow1"
+						},
+						{
+							"name": "RemoveDuplicates"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "AlterRow3"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "aggregate3"
+						},
+						{
+							"name": "union2"
+						},
+						{
+							"name": "aggregate4"
+						},
+						{
+							"name": "filterNullConsumption"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+						"source(output(",
+						"          Month_Name as string,",
+						"          Total_KW_Consumption as double,",
+						"          Total_Price as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
+						"source(output(",
+						"          Year as integer,",
+						"          Total_KW_Consumption as double,",
+						"          Total_Price as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_bill') ~> YearlySource",
+						"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+						"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+						"          KW_Consumption = Forbruk,",
+						"          Price_per_kw = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+						"derivedColumn2 select(mapColumn(",
+						"          Time,",
+						"          Month_Name,",
+						"          Date,",
+						"          Month,",
+						"          KW_Consumption,",
+						"          Price_per_kw,",
+						"          Price,",
+						"          Year",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate1",
+						"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
+						"iif(Month == 2, 'FEB',\r",
+						"iif(Month == 3, 'MAR',\r",
+						"iif(Month == 4, 'APR',\r",
+						"iif(Month == 5, 'MAY',\r",
+						"iif(Month == 6, 'JUN',\r",
+						"iif(Month == 7, 'JUL',\r",
+						"iif(Month == 10, 'OCT',\r",
+						"iif(Month == 12, 'DEC',\r",
+						"iif(Month == 9, 'SEP',\r",
+						"iif(Month == 11, 'NOV',\r",
+						"iif(Month == 8, 'AUG','')\r",
+						")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
+						"union2 aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(Total_KW_Consumption),",
+						"          Total_Price = sum(Total_Price)) ~> aggregate2",
+						"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+						"select1 aggregate(groupBy(Time),",
+						"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+						"filterNullConsumption, AllDateSource exists(source1@Time == AllDateSource@Time,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
+						"aggregate3 alterRow(upsertIf(true())) ~> AlterRow3",
+						"aggregate1, MonthlySource union(byName: true)~> union1",
+						"union1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(Total_KW_Consumption),",
+						"          Total_Price = sum(Total_Price)) ~> aggregate3",
+						"aggregate4, YearlySource union(byName: true)~> union2",
+						"select1 aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate4",
+						"source1 filter(!isNull(Forbruk)) ~> filterNullConsumption",
+						"AlterRow3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Month_Name'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Monthly",
+						"AlterRow2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Year'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Yearly",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Time'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> AllDates"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow_lightbill_monthname_Simple1')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDateSource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDates"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "alterRow1"
+						},
+						{
+							"name": "RemoveDuplicates"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "filterNullConsumption"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+						"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+						"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+						"          KW_Consumption = Forbruk,",
+						"          Price_per_kw = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+						"derivedColumn2 select(mapColumn(",
+						"          Time,",
+						"          Month_Name,",
+						"          Date,",
+						"          Month,",
+						"          KW_Consumption,",
+						"          Price_per_kw,",
+						"          Price,",
+						"          Year",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
+						"iif(Month == 2, 'FEB',\r",
+						"iif(Month == 3, 'MAR',\r",
+						"iif(Month == 4, 'APR',\r",
+						"iif(Month == 5, 'MAY',\r",
+						"iif(Month == 6, 'JUN',\r",
+						"iif(Month == 7, 'JUL',\r",
+						"iif(Month == 10, 'OCT',\r",
+						"iif(Month == 12, 'DEC',\r",
+						"iif(Month == 9, 'SEP',\r",
+						"iif(Month == 11, 'NOV',\r",
+						"iif(Month == 8, 'AUG','')\r",
+						")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
+						"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+						"select1 aggregate(groupBy(Time),",
+						"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+						"filterNullConsumption, AllDateSource exists(source1@Time == AllDateSource@Time,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"source1 filter(!isNull(Forbruk)) ~> filterNullConsumption",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Time'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> AllDates"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow_lightbill_monthname_Simple2')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDateSource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Monthly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Yearly"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "alterRow2"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+						"AllDateSource aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate1",
+						"aggregate1 alterRow(updateIf(true())) ~> AlterRow1",
+						"AllDateSource aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate2",
+						"aggregate2 alterRow(upsertIf(true())) ~> alterRow2",
+						"AlterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Month_Name'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Monthly",
+						"alterRow2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_Bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Year'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Yearly"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow_lightbill_monthname_Vishal')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDateSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "MonthlySource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "YearlySource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Monthly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Yearly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDates"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "alterRow1"
+						},
+						{
+							"name": "RemoveDuplicates"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "AlterRow3"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "aggregate3"
+						},
+						{
+							"name": "union2"
+						},
+						{
+							"name": "aggregate4"
+						},
+						{
+							"name": "filterNullConsumption"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+						"source(output(",
+						"          Month_Name as string,",
+						"          Total_KW_Consumption as double,",
+						"          Total_Price as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
+						"source(output(",
+						"          Year as integer,",
+						"          Total_KW_Consumption as double,",
+						"          Total_Price as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_bill') ~> YearlySource",
+						"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+						"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+						"          KW_Consumption = Forbruk,",
+						"          Price_per_kw = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+						"derivedColumn2 select(mapColumn(",
+						"          Time,",
+						"          Month_Name,",
+						"          Date,",
+						"          Month,",
+						"          KW_Consumption,",
+						"          Price_per_kw,",
+						"          Price,",
+						"          Year",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate1",
+						"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
+						"iif(Month == 2, 'FEB',\r",
+						"iif(Month == 3, 'MAR',\r",
+						"iif(Month == 4, 'APR',\r",
+						"iif(Month == 5, 'MAY',\r",
+						"iif(Month == 6, 'JUN',\r",
+						"iif(Month == 7, 'JUL',\r",
+						"iif(Month == 10, 'OCT',\r",
+						"iif(Month == 12, 'DEC',\r",
+						"iif(Month == 9, 'SEP',\r",
+						"iif(Month == 11, 'NOV',\r",
+						"iif(Month == 8, 'AUG','')\r",
+						")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
+						"union2 aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(Total_KW_Consumption),",
+						"          Total_Price = sum(Total_Price)) ~> aggregate2",
+						"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+						"select1 aggregate(groupBy(Time),",
+						"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+						"filterNullConsumption, AllDateSource exists(source1@Time == AllDateSource@Time,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
+						"aggregate3 alterRow(upsertIf(true())) ~> AlterRow3",
+						"aggregate1, MonthlySource union(byName: true)~> union1",
+						"union1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(Total_KW_Consumption),",
+						"          Total_Price = sum(Total_Price)) ~> aggregate3",
+						"aggregate4, YearlySource union(byName: true)~> union2",
+						"select1 aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate4",
+						"source1 filter(!isNull(Forbruk)) ~> filterNullConsumption",
+						"AlterRow3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Month_Name'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Monthly",
+						"AlterRow2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Year'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Yearly",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Time'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> AllDates"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Generic_Flatten')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_xml",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false,",
+						"     validationMode: 'none',",
+						"     namespaces: true) ~> source1",
+						"source1 foldDown(unroll((byPath('{http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}'))),",
+						"     mapColumn(",
+						"          each((byPath('{http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties}')),match(true()),",
+						"               replace($$,'http://schemas.microsoft.com/ado/2007/08/dataservices,','') = $$)",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_xml')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Vishal_Dataflow_lightbill_monthname')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Excel1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDateSource"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "MonthlySource"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Monthly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "Yearly"
+						},
+						{
+							"linkedService": {
+								"referenceName": "LS_ADL_mysyntest",
+								"type": "LinkedServiceReference"
+							},
+							"name": "AllDates"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "aggregate2"
+						},
+						{
+							"name": "alterRow1"
+						},
+						{
+							"name": "RemoveDuplicates"
+						},
+						{
+							"name": "exists1"
+						},
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "AlterRow3"
+						},
+						{
+							"name": "union1"
+						},
+						{
+							"name": "aggregate3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Time as string,",
+						"          Forbruk as double,",
+						"          Pris as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     inferDriftedColumnTypes: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          Time as string,",
+						"          Month_Name as string,",
+						"          Date as date,",
+						"          Month as integer,",
+						"          KW_Consumption as double,",
+						"          Price_per_kw as double,",
+						"          Price as double,",
+						"          Year as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates') ~> AllDateSource",
+						"source(output(",
+						"          Month_Name as string,",
+						"          Total_KW_Consumption as double,",
+						"          Total_Price as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill') ~> MonthlySource",
+						"exists1 derive(Month = month(toDate(left(Time,10),'yyyy-MM-dd')),",
+						"          Date = toDate(left(Time,10),'yyyy-MM-dd'),",
+						"          KW_Consumption = Forbruk,",
+						"          Price_per_kw = Pris,",
+						"          Price = Forbruk*Pris,",
+						"          Year = year(toDate(left(Time,10),'yyyy-MM-dd'))) ~> derivedColumn1",
+						"derivedColumn2 select(mapColumn(",
+						"          Time,",
+						"          Month_Name,",
+						"          Date,",
+						"          Month,",
+						"          KW_Consumption,",
+						"          Price_per_kw,",
+						"          Price,",
+						"          Year",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate1",
+						"derivedColumn1 derive(Month_Name = iif(Month == 1, 'JAN',\r",
+						"iif(Month == 2, 'FEB',\r",
+						"iif(Month == 3, 'MAR',\r",
+						"iif(Month == 4, 'APR',\r",
+						"iif(Month == 5, 'MAY',\r",
+						"iif(Month == 6, 'JUN',\r",
+						"iif(Month == 7, 'JUL',\r",
+						"iif(Month == 10, 'OCT',\r",
+						"iif(Month == 12, 'DEC',\r",
+						"iif(Month == 9, 'SEP',\r",
+						"iif(Month == 11, 'NOV',\r",
+						"iif(Month == 8, 'AUG','')\r",
+						")))))))))))+'-'+toString(Year)) ~> derivedColumn2",
+						"select1 aggregate(groupBy(Year),",
+						"     Total_KW_Consumption = sum(KW_Consumption),",
+						"          Total_Price = sum(Price)/100) ~> aggregate2",
+						"RemoveDuplicates alterRow(upsertIf(true())) ~> alterRow1",
+						"select1 aggregate(groupBy(Time),",
+						"     each(match(name!='Time'), $$ = last($$))) ~> RemoveDuplicates",
+						"source1, AllDateSource exists(source1@Time == AllDateSource@Time,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> exists1",
+						"aggregate2 alterRow(upsertIf(true())) ~> AlterRow2",
+						"aggregate3 alterRow(upsertIf(true())) ~> AlterRow3",
+						"aggregate1, MonthlySource union(byName: true)~> union1",
+						"union1 aggregate(groupBy(Month_Name),",
+						"     Total_KW_Consumption = sum(Total_KW_Consumption),",
+						"          Total_Price = sum(Total_Price)) ~> aggregate3",
+						"AlterRow3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Monthly_Bill',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Month_Name'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Monthly",
+						"AlterRow2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/Yearly_bill',",
+						"     overwrite: true,",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Year'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> Yearly",
+						"alterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delta',",
+						"     fileSystem: 'staging',",
+						"     folderPath: 'Agva/All_Dates',",
+						"     mergeSchema: false,",
+						"     autoCompact: false,",
+						"     optimizedWrite: false,",
+						"     vacuum: 0,",
+						"     deletable: false,",
+						"     insertable: false,",
+						"     updateable: false,",
+						"     upsertable: true,",
+						"     keys:['Time'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> AllDates"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Excel1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/LS_ADL_mysyntest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/revision_Dataflow')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_xml",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Generic_DS_ADL_Parquet",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          {http://www.w3.org/2005/Atom,feed} as ({http://www.w3.org/2005/Atom,author} as ({http://www.w3.org/2005/Atom,name} as string), {http://www.w3.org/2005/Atom,entry} as ({http://www.w3.org/2005/Atom,category} as ({@scheme} as string, {@term} as string), {http://www.w3.org/2005/Atom,content} as ({@type} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties} as ({http://schemas.microsoft.com/ado/2007/08/dataservices,Bezei} as string, {http://schemas.microsoft.com/ado/2007/08/dataservices,Inco1} as string)), {http://www.w3.org/2005/Atom,id} as string, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string, {@title} as string), {http://www.w3.org/2005/Atom,title} as ({@type} as string, {http://www.w3.org/2005/Atom,_value_} as string), {http://www.w3.org/2005/Atom,updated} as timestamp)[], {http://www.w3.org/2005/Atom,id} as string, {http://www.w3.org/2005/Atom,link} as ({@href} as string, {@rel} as string, {@title} as string), {http://www.w3.org/2005/Atom,title} as ({@type} as string, {http://www.w3.org/2005/Atom,_value_} as string), {http://www.w3.org/2005/Atom,updated} as timestamp)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     validationMode: 'none',",
+						"     namespaces: true) ~> source1",
+						"source1 foldDown(unroll((byPath('{http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}'))),",
+						"     mapColumn(",
+						"          each({http://www.w3.org/2005/Atom,feed}.{http://www.w3.org/2005/Atom,entry}.{http://www.w3.org/2005/Atom,content}.{http://schemas.microsoft.com/ado/2007/08/dataservices/metadata,properties},match(true()),",
+						"               replace($$,'http://schemas.microsoft.com/ado/2007/08/dataservices,','') = $$)",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_xml')]",
+				"[concat(variables('workspaceId'), '/datasets/Generic_DS_ADL_Parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CREATE TABLE Monthly_Bill')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE EXTERNAL TABLE [dbo].[Monthly_Bill]\n(\n\t [Month_Name] VARCHAR(20),\n\t [Total_KW_Consumption] FLOAT,\n\t [Total_Price] FLOAT\n)\nWITH\n(\n\tLOCATION = 'Agva/Monthly_Bill',\n\tDATA_SOURCE = [staging],\n\tFILE_FORMAT = [DeltaLakeFormat]\n)\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Agva_Electricity",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CREATE TABLE Yearly_Bill')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE [dbo].[Yearly_Bill]\nCREATE EXTERNAL TABLE [dbo].[Yearly_Bill]\n(\n\t [Year] INT,\n\t [Total_KW_Consumption] FLOAT,\n\t [Total_Price] FLOAT\n)\nWITH\n(\n\tLOCATION = 'Agva/Yearly_bill',\n\tDATA_SOURCE = [staging],\n\tFILE_FORMAT = [DeltaLakeFormat]\n)\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Agva_Electricity",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 10000 *\nFROM\n    OPENROWSET(\n        BULK 'https://mysynstorage.dfs.core.windows.net/staging/Agva/Yearly_bill/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Agva_Electricity",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://mysynstorage.dfs.core.windows.net/staging/Agva/Spark_Yearly_Bill/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://mysynstorage.dfs.core.windows.net/staging/Agva/Spark_Monthly_Bill/',\n        FORMAT = 'DELTA'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_Application_Grp2_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE DBO.ApplicationGroup2\nCREATE EXTERNAL TABLE ApplicationGroup2 (\n     AddedOn VARCHAR(MAX), \n     Sour1From VARCHAR(MAX), \n     Sour1To VARCHAR(MAX),\n     Target1 VARCHAR(MAX),\n     ValidFrom VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'ApplicationGroup2_KEDE/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_Incoterm_MDX_table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE mySchema.Incoterm_MDX\nCREATE EXTERNAL TABLE Incoterm_MDX (\n     Bezei VARCHAR(MAX), \n     Inco1 VARCHAR(MAX), \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Incoterm_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_Location_MDX_table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE mySchema.Location_MDX\nCREATE EXTERNAL TABLE Location_MDX (\n     Ktext VARCHAR(MAX), \n     Stand VARCHAR(MAX), \n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Location_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_MaterialStorageLocation_MDX_table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE mySchema.MaterialStorageLocation_MDX\nCREATE EXTERNAL TABLE MaterialStorageLocation_MDX(\n     Arbpl VARCHAR(MAX), \n     Kostl VARCHAR(MAX), \n     Ktext VARCHAR(MAX), \n     Lstar VARCHAR(MAX),\n     Verwe VARCHAR(MAX), \n     WcKat VARCHAR(MAX),\n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'MaterialStorageLocation_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_Metadata_KeyCols')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nDROP EXTERNAL TABLE mySchema.Metadata_Key_Cols\nCREATE EXTERNAL TABLE mySchema.Metadata_Key_Cols (\n     Table_Name VARCHAR(MAX), \n     Name  VARCHAR(MAX),\n     English_Name  VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Metadata/Key_Cols/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_Metadata_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nDROP EXTERNAL TABLE mySchema.Metadata\nCREATE EXTERNAL TABLE mySchema.Metadata (\n     Table_Name VARCHAR(MAX), \n     Column_Name VARCHAR(MAX), \n     English_Name VARCHAR(MAX),\n     Data_Type VARCHAR(MAX),\n     Key_Columns VARCHAR(MAX)\n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Metadata/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_SalesOffice_MDX')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE mySchema.SalesOffice_MDX\nCREATE EXTERNAL TABLE SalesOffice_MDX(\n     Vkbur VARCHAR(MAX), \n     Bezei VARCHAR(MAX), \n     Adrnr VARCHAR(MAX), \n\n     \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'SalesOffice_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_WorkCenter_MDX_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nDROP EXTERNAL TABLE mySchema.WorkCenter_MDX\nCREATE EXTERNAL TABLE WorkCenter_MDX(\n     Arbpl VARCHAR(MAX), \n     Kostl VARCHAR(MAX), \n     Ktext VARCHAR(MAX), \n     Lstar VARCHAR(MAX),\n     Verwe VARCHAR(MAX), \n     WcKat VARCHAR(MAX),\n     Werks VARCHAR(MAX),\n\n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'WorkCenter_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/create_table_Route_MDX')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP EXTERNAL TABLE mySchema.Route_MDX\nCREATE EXTERNAL TABLE Route_MDX(\n     Route VARCHAR(MAX), \n     Bezei VARCHAR(MAX), \n     \n     \n) WITH (\n         DATA_SOURCE = myStagingContainer,\n         LOCATION = 'Route_MDX/Processed/*.parquet',\n         FILE_FORMAT = myParquetFormat\n         \n);",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "mysqldb",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Function_Library')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "ccf25eef-7e47-4bd6-8973-894e8a35a3f3"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": true,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Calculate aggragate on grouping clumn based on parameters:\r\n",
+							"# df, grouping_column, agg_operation, agg_columns"
+						]
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"def my_aggregate(df, grouping_column, agg_operation, agg_columns):\r\n",
+							"    # exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+							"    # df = df.groupBy(\"Time\").agg(exprs)\r\n",
+							"\r\n",
+							"    arguments = [agg_operation(col(col_name)).alias(col_name) for col_name in agg_columns]\r\n",
+							"    df = df.groupBy(grouping_column).agg(*arguments)\r\n",
+							"\r\n",
+							"    return df\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Upsert data from df into given sink_path with specified key_column"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def upsert_delta_table(sink_path, df, key_column):\r\n",
+							"    try:\r\n",
+							"        result = df.write.format(\"delta\").save(sink_path)\r\n",
+							"        print('Table does not exist. Created new table.')\r\n",
+							"    except:\r\n",
+							"        print('Table Found. Updating existing table...')\r\n",
+							"        delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+							"\r\n",
+							"        result = delta_table.alias(\"target\").merge(\r\n",
+							"            df.alias(\"source\"),\r\n",
+							"            \"target.\"+key_column+\" = source.\"+key_column) \\\r\n",
+							"            .whenMatchedUpdateAll() \\\r\n",
+							"            .whenNotMatchedInsertAll() \\\r\n",
+							"            .execute()\r\n",
+							"    return result\r\n",
+							"        "
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook 2')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "mysparkpool",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "416a16af-bd1e-4d3d-8c4d-0bba862bad09"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/b2a378a1-12f1-45ef-b390-81e13240a72f/resourceGroups/myrgp_2023/providers/Microsoft.Synapse/workspaces/my-syn-test/bigDataPools/mysparkpool",
+						"name": "mysparkpool",
+						"type": "Spark",
+						"endpoint": "https://my-syn-test.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Import Libraries"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import year, month, col, to_date, when, last\r\n",
+							"from delta.tables import DeltaTable"
+						],
+						"outputs": [],
+						"execution_count": 50
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Read data from source file"
+						]
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"df = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231123_144912.csv', format='csv', header=True)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Filter out data having NULL consumption"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = df.filter(df.Forbruk!= '')"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Rename existing columns and Derive Price, Month, Year and Date columns"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = df.withColumn('KW_Consumption',df.Forbruk)\r\n",
+							"df = df.withColumn('Price_per_kw',df.Pris)\r\n",
+							"df = df.withColumn('Price',df.Forbruk * df.Pris)\r\n",
+							"df = df.withColumn('Date',to_date(df.Time[0:10], 'dd.MM.yyyy'))\r\n",
+							"df = df.withColumn('Month',month('Date'))\r\n",
+							"df = df.withColumn('Year',year('Date'))\r\n",
+							"\r\n",
+							"df = df.drop('Forbruk','Pris')"
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Derive Month_Name Column"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = df.withColumn('Month_Name', when(df.Month ==1, 'Jan')\r\n",
+							".otherwise(when(df.Month ==2, 'Feb')\r\n",
+							".otherwise(when(df.Month ==3, 'Mar')\r\n",
+							".otherwise(when(df.Month ==4, 'Apr')\r\n",
+							".otherwise(when(df.Month ==5, 'May')\r\n",
+							".otherwise(when(df.Month ==6, 'Jun')\r\n",
+							".otherwise(when(df.Month ==7, 'Jul')\r\n",
+							".otherwise(when(df.Month ==8, 'Aug')\r\n",
+							".otherwise(when(df.Month ==9, 'Sep')\r\n",
+							".otherwise(when(df.Month ==10, 'Oct')\r\n",
+							".otherwise(when(df.Month ==11, 'Nov')\r\n",
+							".otherwise(when(df.Month ==12, 'Dec')\r\n",
+							".otherwise('')))))))))))))\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 22
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"month_list = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']\r\n",
+							"month = 8\r\n",
+							"print(month_list[month-1])\r\n",
+							""
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Remove duplicates for Time column"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
+							"# df = df.groupBy(\"Time\").agg(exprs)\r\n",
+							"\r\n",
+							"grouping_column = 'Time'\r\n",
+							"arguments = [last(col(col_name)).alias(col_name) for col_name in df.columns if col_name != grouping_column]\r\n",
+							"df = df.groupBy(grouping_column).agg(*arguments)\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 23
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Display Sample data and count of unique rows"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(df.limit(6))\r\n",
+							"print(df.count())"
+						],
+						"outputs": [],
+						"execution_count": 38
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Upsert Data into given path"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"sink_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_All_Dates\"\r\n",
+							"\r\n",
+							"try:\r\n",
+							"    df.write.format(\"delta\").save(sink_path)\r\n",
+							"    print('Table does not exist. Created new table.')\r\n",
+							"except:\r\n",
+							"    print('Table Found. Updating existing table...')\r\n",
+							"    delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
+							"\r\n",
+							"    result = delta_table.alias(\"target\").merge(\r\n",
+							"        df.alias(\"source\"),\r\n",
+							"        \"target.Time = source.Time\") \\\r\n",
+							"        .whenMatchedUpdateAll() \\\r\n",
+							"        .whenNotMatchedInsertAll() \\\r\n",
+							"        .execute()\r\n",
+							"    \r\n",
+							"    print(result)\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 42
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						]
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook_simple2')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "mysparkpool",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "3112e55e-0e7a-40be-a2f3-49c734152331"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": true,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/b2a378a1-12f1-45ef-b390-81e13240a72f/resourceGroups/myrgp_2023/providers/Microsoft.Synapse/workspaces/my-syn-test/bigDataPools/mysparkpool",
+						"name": "mysparkpool",
+						"type": "Spark",
+						"endpoint": "https://my-syn-test.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import year, month, col, to_date, when, last, sum\r\n",
+							"from delta.tables import DeltaTable\r\n",
+							"from pathlib import Path\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 17
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"%run \"Function_Library\""
+						],
+						"outputs": [],
+						"execution_count": 23
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"df_Yearly = spark.read.load('abfss://staging@mysynstorage.dfs.core.windows.net/Agva/All_Dates', format='delta', header=True)\r\n",
+							"df_Monthly = df_Yearly\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 18
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_Yearly = my_aggregate(df_Yearly, 'Year', sum, ['Price','KW_Consumption'])\r\n",
+							"df_Monthly = my_aggregate(df_Monthly, 'Month_Name', sum, ['Price','KW_Consumption'])\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 24
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(df_Yearly.limit(6))\r\n",
+							"display(df_Monthly.limit(6))"
+						],
+						"outputs": [],
+						"execution_count": 25
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"year_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
+							"result = upsert_delta_table(year_path, df_Yearly, \"Year\")"
+						],
+						"outputs": [],
+						"execution_count": 26
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"month_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
+							"result = upsert_delta_table(month_path, df_Monthly, 'Month_Name')\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 27
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def my_bill(df1,billpattern):\r\n",
+							"    if billpattern=='Year':\r\n",
+							"      sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
+							"    elif billpattern=='Month_Name':\r\n",
+							"      sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
+							"\r\n",
+							"    try:\r\n",
+							"      df1.write.format(\"delta\").save(sinkpath)\r\n",
+							"      print('Table does not exist. Created new table.')\r\n",
+							"    except:\r\n",
+							"      print('Table Found. Updating existing table...')\r\n",
+							"      delta_table = DeltaTable.forPath(spark, sinkpath)\r\n",
+							"\r\n",
+							"      result = delta_table.alias(\"target\").merge(\r\n",
+							"      df1.alias(\"source\"),\r\n",
+							"      \"target.\"+billpattern+\" = source.\"+billpattern) \\\r\n",
+							"      .whenMatchedUpdateAll() \\\r\n",
+							"      .whenNotMatchedInsertAll() \\\r\n",
+							"      .execute()\r\n",
+							"    \r\n",
+							"    return(result)\r\n",
+							"\r\n",
+							"    \r\n",
+							"\r\n",
+							"    "
+						],
+						"outputs": [],
+						"execution_count": 29
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"My_Yearly_bill = my_bill(df_Yearly, 'Year')\r\n",
+							"My_Monthly_bill = my_bill(df_Monthly, 'Month_Name')"
+						],
+						"outputs": [],
+						"execution_count": 30
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(My_Yearly_bill.limit(6))\r\n",
+							"display(My_Monthly_bill.limit(6))"
+						],
+						"outputs": [],
+						"execution_count": 20
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Sample_Notebook')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "bbfef527-a54a-40eb-9e94-282d698bf529"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# sample notebook \r\n",
+							"this notebook is used to read excel file of hourly electricity data and process it to produce table of monthly electricity usage and bill"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## read excel file"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"file_path = 'abfss://staging@mysynstorage.dfs.core.windows.net/Agva/hourvalues_20231120_191333.xlsx'\r\n",
+							"df = pd.read_excel(file_path)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						]
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/mysparkpool')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 5
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 4,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.3",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "westeurope"
+		}
+	]
+}
