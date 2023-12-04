@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "bc93284c-e0cb-441b-ae82-f98c605f0b9b"
+				"spark.autotune.trackingId": "5627ace2-d9d2-4578-af1b-278c22f2b1aa"
 			}
 		},
 		"metadata": {
@@ -211,22 +211,10 @@
 				},
 				"source": [
 					"month_path = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
-					"result = upsert_delta_table(month_path, df_Monthly, 'Month_Name')"
+					"result = upsert_delta_table(month_path, df_Monthly, 'Month_Name')\r\n",
+					""
 				],
 				"execution_count": 14
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					""
-				]
 			},
 			{
 				"cell_type": "code",
