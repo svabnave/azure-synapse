@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5627ace2-d9d2-4578-af1b-278c22f2b1aa"
+				"spark.autotune.trackingId": "97c22da5-f3d6-4e5a-a76b-48a8780f3ffd"
 			}
 		},
 		"metadata": {
@@ -83,14 +83,6 @@
 					}
 				},
 				"source": [
-					"def my_aggregate(df, grouping_column, agg_operation, agg_columns):\r\n",
-					"    # exprs = {col_name: \"last\" for col_name in df.columns}\r\n",
-					"    # df = df.groupBy(\"Time\").agg(exprs)\r\n",
-					"\r\n",
-					"    arguments = [agg_operation(col(col_name)).alias(col_name) for col_name in agg_columns]\r\n",
-					"    df = df.groupBy(grouping_column).agg(*arguments)\r\n",
-					"\r\n",
-					"    return df\r\n",
 					""
 				],
 				"execution_count": 4
@@ -109,22 +101,7 @@
 					}
 				},
 				"source": [
-					"def upsert_delta_table(sink_path, df, key_column):\r\n",
-					"    try:\r\n",
-					"        result = df.write.format(\"delta\").save(sink_path)\r\n",
-					"        print('Table does not exist. Created new table.')\r\n",
-					"    except:\r\n",
-					"        print('Table Found. Updating existing table...')\r\n",
-					"        delta_table = DeltaTable.forPath(spark, sink_path)\r\n",
-					"\r\n",
-					"        result = delta_table.alias(\"target\").merge(\r\n",
-					"            df.alias(\"source\"),\r\n",
-					"            \"target.\"+key_column+\" = source.\"+key_column) \\\r\n",
-					"            .whenMatchedUpdateAll() \\\r\n",
-					"            .whenNotMatchedInsertAll() \\\r\n",
-					"            .execute()\r\n",
-					"    return result\r\n",
-					"        "
+					""
 				],
 				"execution_count": 6
 			},
