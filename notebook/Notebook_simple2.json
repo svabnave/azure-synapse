@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "145bb41d-0d73-494d-bccd-c105c9434055"
+				"spark.autotune.trackingId": "3112e55e-0e7a-40be-a2f3-49c734152331"
 			}
 		},
 		"metadata": {
@@ -192,7 +192,7 @@
 					"def my_bill(df1,billpattern):\r\n",
 					"    if billpattern=='Year':\r\n",
 					"      sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Yearly_Bill\"\r\n",
-					"    else billpattern=='Month_Name':\r\n",
+					"    elif billpattern=='Month_Name':\r\n",
 					"      sinkpath = \"abfss://staging@mysynstorage.dfs.core.windows.net/Agva/Spark_Monthly_Bill\"\r\n",
 					"\r\n",
 					"    try:\r\n",
@@ -215,7 +215,7 @@
 					"\r\n",
 					"    "
 				],
-				"execution_count": 31
+				"execution_count": 29
 			},
 			{
 				"cell_type": "code",
@@ -234,7 +234,7 @@
 					"My_Yearly_bill = my_bill(df_Yearly, 'Year')\r\n",
 					"My_Monthly_bill = my_bill(df_Monthly, 'Month_Name')"
 				],
-				"execution_count": 35
+				"execution_count": 30
 			},
 			{
 				"cell_type": "code",
